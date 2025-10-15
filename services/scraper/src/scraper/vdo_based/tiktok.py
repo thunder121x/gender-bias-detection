@@ -20,7 +20,7 @@ class TikTokScraper:
         self.scraper_module = "TikTokApi"
         self.scrape_date = datetime.utcnow().strftime(DATETIME_FORMAT)
         self.output_dir = OUTPUT_DIR_TIKTOK
-        self.output_file = self.output_dir / "tiktok_comments.csv"
+        self.output_file = self.output_dir / f"tiktok_comments_{video_id}.csv"
         self.output_dir.mkdir(parents=True, exist_ok=True)
 
     async def extract_comments(self, count: int = 30) -> List[SocialMediaRecord]:
@@ -85,11 +85,4 @@ class TikTokScraper:
             await self.save_to_csv(comments)
         else:
             print("⚠️ No comments found for this video.")
-
-
-if __name__ == "__main__":
-    video_id = 7546438874688523538
-    ms_token = os.environ.get("ms_token", None)
-
-    scraper = TikTokScraper(video_id=video_id, ms_token=ms_token)
-    asyncio.run(scraper.run())
+            
