@@ -41,6 +41,9 @@ htmlcov/
 # Jupyter / IPython
 .ipynb_checkpoints/
 
+# never push Jupyter
+.ipynb
+
 # Temporary
 *.tmp
 *.bak
