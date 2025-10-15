@@ -1,7 +1,7 @@
 from dataclasses import asdict, dataclass, field
 from datetime import datetime
 from typing import Literal, Optional, ClassVar
-from .config import FIELDS, SCRAPE_DATE
+from .config import FIELDS, SCRAPE_DATE, PlatformType
 from .utils import date_time_formatter
 from .constants import DATETIME_FORMAT
 
@@ -43,7 +43,7 @@ class SocialMediaRecord:
     def __init__(
         self,
         id: Optional[str] = None,
-        platform: Optional[Literal["tiktok", "youtube", "twitter", "facebook"]] = None,
+        platform: Optional[PlatformType] = None,
         platform_type: Optional[str] = None,
         url: Optional[str] = None,
         content_type: Optional[str] = "text",

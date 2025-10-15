@@ -10,19 +10,19 @@ from scraper.config import FIELDS
 from scraper.utils import date_time_formatter
 from scraper.dataclass import SocialMediaRecord
 
-
 @dataclass
 class YouTubeScraper:
     """Scraper class for extracting YouTube comments using yt-dlp."""
 
-    video_url: str
+    video_id: str
     output_dir: Path = OUTPUT_DIR_YOUTUBE
     scraper_module: str = "yt-dlp"
 
     def __post_init__(self):
+        self.video_url = f"https://www.youtube.com/watch?v={self.video_id}"
         self.output_dir.mkdir(parents=True, exist_ok=True)
         self.scrape_date = datetime.utcnow().strftime(DATETIME_FORMAT)
-        self.output_file = self.output_dir / "youtube_comments.csv"
+        self.output_file = self.output_dir / f"youtube_comments_{self.video_id}.csv"
 
     def get_options(self) -> dict:
         """Return standard yt-dlp extraction options."""
@@ -79,9 +79,3 @@ class YouTubeScraper:
             self.save_to_csv(comments)
         else:
             print("⚠️ No comments found for this video.")
-
-
-if __name__ == "__main__":
-    video_url = "https://www.youtube.com/watch?v=bQoVZe4Ohbo"
-    scraper = YouTubeScraper(video_url)
-    scraper.run()
