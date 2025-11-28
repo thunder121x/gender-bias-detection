@@ -6,9 +6,7 @@ import pandas as pd
 import argparse
 
 from prompteng.constants import PROMPT_DIR, OUTPUT_DIR, ASSETS_DIR
-
-# from .constants import PROMPT_DIR, OUTPUT_DIR, ASSETS_DIR
-
+BATCH_SAVE = 50
 
 # ----------------
 # Helper
@@ -42,6 +40,10 @@ def main():
         "--output_csv", type=str, required=False,
         help="Output CSV to save results (default: OUTPUT_DIR/<input_name>_<model>.csv)"
     )
+    parser.add_argument(
+        "--autosave", action="store_true",
+        help=f"Enable autosave checkpoint every {BATCH_SAVE} rows (default: OFF)"
+    )
     args = parser.parse_args()
 
     # Resolve prompt folder
@@ -56,12 +58,15 @@ def main():
         input_name = Path(args.input_csv).stem
         safe_model = args.model.replace(":", "_")
         output_csv = OUTPUT_DIR / f"{input_name}_{safe_model}.csv"
+        
+    autosave_path = output_csv.with_name(output_csv.stem + "_autosave.csv")
 
     print(f"--- Starting Annotation ---")
     print(f"Model: {args.model}")
     print(f"Prompt folder: {prompt_folder}")
     print(f"Input CSV: {args.input_csv}")
     print(f"Output CSV: {output_csv}")
+    print(f"Autosave:", "ON" if args.autosave else "OFF")
 
     # Load prompts
     sys_prompt = read_file(system_file)
@@ -107,10 +112,22 @@ def main():
             df.at[i, output_col] = "ERROR"
 
         time.sleep(0.2)
+        
+        if args.autosave and (i + 1) % BATCH_SAVE == 0:
+            df.to_csv(autosave_path, index=False, encoding="utf-8-sig")
+            print(f"\n💾 Autosaved checkpoint at row {i+1}: {autosave_path}")
 
     # save new CSV
     df.to_csv(output_csv, index=False, encoding="utf-8-sig")
     print(f"\n\n✅ Done! Saved to {output_csv}")
+    
+    # Remove autosave file if exists
+    if args.autosave and autosave_path.exists():
+        try:
+            os.remove(autosave_path)
+            print(f"🧹 Removed autosave file: {autosave_path}")
+        except:
+            print(f"⚠ Could not delete autosave file: {autosave_path}")
 
 
 if __name__ == "__main__":

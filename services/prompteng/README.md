@@ -108,7 +108,8 @@ python annotate.py \
     --model qwen2.5:7b \
     --prompt draft_1 \
     --input_csv assets/testset.csv \
-    --output_csv output/testset_qwen2.5_7b.csv
+    --output_csv output/testset_qwen2.5_7b.csv \
+    --autosave
 
 Expected console output:
 
@@ -117,6 +118,7 @@ Model: qwen2.5:7b
 Prompt folder: prompts/draft_1
 Input CSV: assets/testset.csv
 Output CSV: output/testset_qwen2.5_7b.csv
+Autosave: ON
 
 [✓] Done!
 
