@@ -27,6 +27,7 @@ dist/
 logs/
 output/
 outputs/
+assets/
 
 # OS Files
 .DS_Store

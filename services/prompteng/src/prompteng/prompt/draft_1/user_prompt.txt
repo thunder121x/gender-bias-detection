@@ -1,0 +1,12 @@
+Annotate the following tokenized Thai sentence for gender bias using the provided definitions and output format.
+
+Tokens:
+<PASTE_TOKEN_LIST_HERE>
+
+Return ONLY a valid JSON object with fields:
+- "tokens"
+- "rationales"
+- "triggers"
+- "sent_bias"
+
+Do not add explanations or extra text.
