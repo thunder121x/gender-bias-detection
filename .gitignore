@@ -3,6 +3,12 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+Default/
+Profile*/
+User Data/
+Chrome/
+Chrome Profile*/
+
 # Virtual Environments
 .venv/
 env/
