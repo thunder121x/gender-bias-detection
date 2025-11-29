@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 import ollama
 import os
@@ -6,6 +7,8 @@ import pandas as pd
 import argparse
 
 from prompteng.constants import PROMPT_DIR, OUTPUT_DIR, ASSETS_DIR
+from prompteng.postprocessing import postprocess_json_output
+
 BATCH_SAVE = 50
 
 # ----------------
@@ -100,12 +103,9 @@ def main():
                     {"role": "user", "content": prompt_filled},
                 ],
             )
-            result = (
-                response["message"]["content"]
-                .replace("\n", " ")
-                .replace("|", "")
-            )
-            df.at[i, output_col] = result
+            raw = response["message"]["content"]
+            processed = postprocess_json_output(raw)
+            df.at[i, output_col] = processed
 
         except Exception as e:
             print(f"\nError on row {i}: {e}")
