@@ -4,6 +4,7 @@ const STORAGE_KEY = 'annotator-state-v1';
 
 const emptyRationale = () => ({
   id: '',
+  bias_type: null,
   spans: [],
   triggers: []
 });
@@ -20,10 +21,17 @@ export const useAnnotationState = () => {
     if (!saved) return;
     try {
       const parsed = JSON.parse(saved);
-      setSentences(parsed.sentences || []);
+      const hydrated = (parsed.sentences || []).map((s) => ({
+        ...s,
+        rationales: (s.rationales || []).map((r) => ({
+          bias_type: null,
+          ...r
+        }))
+      }));
+      setSentences(hydrated);
       setCurrentIndex(parsed.currentIndex || 0);
       setView(parsed.view || 'upload');
-      setCurrentRationale(parsed.currentRationale || emptyRationale());
+      setCurrentRationale({ ...emptyRationale(), ...parsed.currentRationale });
       setMode(parsed.mode || 'rationale');
     } catch (err) {
       console.error('Failed to load saved state', err);
@@ -47,7 +55,10 @@ export const useAnnotationState = () => {
         id: row.id ?? `row-${idx + 1}`,
         tokens: row.tokens ?? [],
         text: row.text ?? (row.tokens ? row.tokens.join(' ') : ''),
-        rationales: row.rationales ?? []
+        rationales: (row.rationales || []).map((r) => ({
+          bias_type: null,
+          ...r
+        }))
       }))
     );
     setCurrentIndex(0);

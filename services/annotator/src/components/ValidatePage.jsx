@@ -22,7 +22,10 @@ const ValidatePage = ({ sentence, onBack, onConfirm }) => {
       rationales: (sentence.rationales || []).flatMap((r) => r.spans || []),
       triggers: (sentence.rationales || []).flatMap((r) =>
         (r.triggers || []).map((t) => ({ span: t.span }))
-      )
+      ),
+      bias_type: (sentence.rationales || [])
+        .map((r) => r.bias_type)
+        .filter(Boolean)
     }),
     [sentence]
   );
@@ -66,6 +69,26 @@ const ValidatePage = ({ sentence, onBack, onConfirm }) => {
             </div>
           </div>
           <p className="mt-2 text-slate-600">{sentence.text}</p>
+          <div className="mt-3 flex flex-wrap gap-2 text-xs">
+            {(exportPayload.bias_type || []).length === 0 ? (
+              <span className="px-2 py-1 rounded bg-slate-100 text-slate-600">
+                No bias type selected
+              </span>
+            ) : (
+              exportPayload.bias_type.map((bias, idx) => (
+                <span
+                  key={`${bias}-${idx}`}
+                  className={`px-2 py-1 rounded font-semibold ${
+                    bias === 'stereotype'
+                      ? 'bg-blue-200 text-blue-900'
+                      : 'bg-rose-200 text-rose-900'
+                  }`}
+                >
+                  {bias}
+                </span>
+              ))
+            )}
+          </div>
         </div>
 
         <div className="scroll-card p-4">
