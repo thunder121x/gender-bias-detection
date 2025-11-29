@@ -1,0 +1,135 @@
+import { useEffect, useMemo, useState } from 'react';
+import clsx from 'clsx';
+
+const normalizeRange = (range) => {
+  if (!range) return null;
+  const [start, end] = range;
+  return [Math.min(start, end), Math.max(start, end)];
+};
+
+const TokenAnnotator = ({
+  tokens,
+  rationales,
+  currentRationale,
+  mode,
+  onAddSpan,
+  onModeChange
+}) => {
+  const [selection, setSelection] = useState(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const previewRange = normalizeRange(selection);
+
+  const flattenLists = (lists) =>
+    (lists || []).flatMap((l) => (Array.isArray(l) ? l : [l])).map((n) => Number(n));
+
+  const { savedRat, savedTrg, pendingRat, pendingTrg } = useMemo(() => {
+    const savedRat = new Set();
+    const savedTrg = new Set();
+    const pendingRat = new Set();
+    const pendingTrg = new Set();
+
+    const markList = (set, list) => {
+      list?.forEach((idx) => {
+        set.add(Number(idx));
+      });
+    };
+
+    (rationales || []).forEach((r) => {
+      (r.spans || []).forEach((list) => markList(savedRat, list));
+      (r.triggers || []).forEach((list) => markList(savedTrg, list));
+    });
+
+    markList(pendingRat, flattenLists(currentRationale.spans));
+    markList(pendingTrg, flattenLists(currentRationale.triggers));
+
+    return { savedRat, savedTrg, pendingRat, pendingTrg };
+  }, [rationales, currentRationale]);
+
+  useEffect(() => {
+    const handleMouseUp = () => {
+      if (isDragging) {
+        commitSelection();
+      }
+    };
+    window.addEventListener('mouseup', handleMouseUp);
+    return () => window.removeEventListener('mouseup', handleMouseUp);
+  }, [isDragging, previewRange, onAddSpan]);
+
+  const commitSelection = () => {
+    if (previewRange) {
+      onAddSpan(previewRange);
+    }
+    setIsDragging(false);
+    setSelection(null);
+  };
+
+  const beginSelection = (idx) => {
+    setIsDragging(true);
+    setSelection([idx, idx]);
+  };
+
+  const extendSelection = (idx) => {
+    if (!isDragging) return;
+    setSelection(([start]) => [start, idx]);
+  };
+
+  const isInPreview = (idx) =>
+    previewRange && idx >= previewRange[0] && idx <= previewRange[1];
+
+  const getTokenStyle = (idx) => {
+    if (isInPreview(idx)) {
+      return mode === 'trigger' ? 'bg-trigger-light' : 'bg-rationale-light';
+    }
+    if (pendingTrg.has(idx)) return 'bg-trigger text-white';
+    if (pendingRat.has(idx)) return 'bg-rationale text-white';
+    // if (savedTrg.has(idx)) return 'bg-trigger text-white';
+    // if (savedRat.has(idx)) return 'bg-rationale text-white';
+    return 'bg-slate-100';
+  };
+
+  return (
+    <div className="scroll-card p-4">
+      <div className="flex items-center justify-between mb-3">
+        <div className="text-sm text-slate-600">
+          Drag to select tokens. Current mode:{' '}
+          <span className="font-semibold text-rose-600 uppercase">{mode}</span>
+        </div>
+        <div className="flex items-center gap-2 text-xs text-slate-500">
+          <button
+            type="button"
+            onClick={() => onModeChange?.('rationale')}
+            className="px-2 py-1 rounded bg-rationale-light text-rose-700 border border-transparent hover:border-rose-200 transition"
+          >
+            Rationale
+          </button>
+          <button
+            type="button"
+            onClick={() => onModeChange?.('trigger')}
+            className="px-2 py-1 rounded bg-trigger-light text-red-700 border border-transparent hover:border-red-200 transition"
+          >
+            Trigger
+          </button>
+        </div>
+      </div>
+      <div className="flex flex-wrap gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
+        {tokens.map((token, idx) => (
+          <span
+            key={`${token}-${idx}`}
+            className={clsx(
+              'token-span px-2 py-1 rounded cursor-pointer select-none',
+              getTokenStyle(idx)
+            )}
+            onMouseDown={() => beginSelection(idx)}
+            onMouseEnter={() => extendSelection(idx)}
+            onMouseUp={commitSelection}
+          >
+            {token}
+          </span>
+        ))}
+      </div>
+    </div>
+  );
+};
+
+export default TokenAnnotator;
