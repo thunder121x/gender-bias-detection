@@ -35,6 +35,9 @@ const AnnotatePage = ({
     return list;
   };
 
+  const dedupeList = (list) =>
+    Array.from(new Set((list || []).map((n) => Number(n)))).sort((a, b) => a - b);
+
   const handleAddSpan = (range) => {
     setMessage('');
     const asList = rangeToIndexList(range);
@@ -45,13 +48,13 @@ const AnnotatePage = ({
       }
       setCurrentRationale((prev) => ({
         ...prev,
-        triggers: [...(prev.triggers || []), ...asList]
+        triggers: dedupeList([...(prev.triggers || []), ...asList])
       }));
     } else {
       setCurrentRationale((prev) => ({
         ...prev,
         id: prev.id || nextRationaleId, // auto-assign if empty
-        spans: [...(prev.spans || []), ...asList]
+        spans: dedupeList([...(prev.spans || []), ...asList])
       }));
     }
   };
