@@ -7,7 +7,7 @@ const escapeCell = (value) => {
 };
 
 export const buildCSV = (sentences) => {
-  const header = ['id', 'text', 'tokens', 'rationales', 'triggers'];
+  const header = ['id', 'text', 'tokens', 'rationales', 'triggers', 'bias_type'];
   const lines = [header.join(',')];
 
   sentences.forEach((sentence) => {
@@ -18,13 +18,17 @@ export const buildCSV = (sentences) => {
     const flattenedTriggers = (sentence.rationales || []).flatMap((r) =>
       (r.triggers || []).map((t) => ({ span: t.span }))
     );
+    const biasTypes = (sentence.rationales || [])
+      .map((r) => r.bias_type)
+      .filter(Boolean);
 
     const row = [
       escapeCell(sentence.id),
       escapeCell(sentence.text ?? tokens.join(' ')),
       escapeCell(JSON.stringify(tokens)),
       escapeCell(JSON.stringify(flattenedRationales)),
-      escapeCell(JSON.stringify(flattenedTriggers))
+      escapeCell(JSON.stringify(flattenedTriggers)),
+      escapeCell(JSON.stringify(biasTypes))
     ];
     lines.push(row.join(','));
   });
