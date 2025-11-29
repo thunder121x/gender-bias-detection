@@ -130,6 +130,7 @@ const AnnotatePage = ({
           rationales={sentence.rationales}
           currentRationale={currentRationale}
           mode={mode}
+          onModeChange={setMode}
           onAddSpan={handleAddSpan}
         />
 

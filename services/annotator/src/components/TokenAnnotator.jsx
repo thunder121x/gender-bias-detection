@@ -7,7 +7,14 @@ const normalizeRange = (range) => {
   return [Math.min(start, end), Math.max(start, end)];
 };
 
-const TokenAnnotator = ({ tokens, rationales, currentRationale, mode, onAddSpan }) => {
+const TokenAnnotator = ({
+  tokens,
+  rationales,
+  currentRationale,
+  mode,
+  onAddSpan,
+  onModeChange
+}) => {
   const [selection, setSelection] = useState(null);
   const [isDragging, setIsDragging] = useState(false);
 
@@ -80,10 +87,20 @@ const TokenAnnotator = ({ tokens, rationales, currentRationale, mode, onAddSpan 
           <span className="font-semibold text-rose-600 uppercase">{mode}</span>
         </div>
         <div className="flex items-center gap-2 text-xs text-slate-500">
-          <span className="px-2 py-1 rounded bg-rationale-light text-rose-700">
+          <button
+            type="button"
+            onClick={() => onModeChange?.('rationale')}
+            className="px-2 py-1 rounded bg-rationale-light text-rose-700 border border-transparent hover:border-rose-200 transition"
+          >
             Rationale
-          </span>
-          <span className="px-2 py-1 rounded bg-trigger-light text-red-700">Trigger</span>
+          </button>
+          <button
+            type="button"
+            onClick={() => onModeChange?.('trigger')}
+            className="px-2 py-1 rounded bg-trigger-light text-red-700 border border-transparent hover:border-red-200 transition"
+          >
+            Trigger
+          </button>
         </div>
       </div>
       <div className="flex flex-wrap gap-2 p-3 bg-slate-50 rounded-lg border border-slate-200">
