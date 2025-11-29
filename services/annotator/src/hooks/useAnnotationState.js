@@ -9,6 +9,34 @@ const emptyRationale = () => ({
   triggers: []
 });
 
+const normalizeSpanList = (entry) => {
+  if (Array.isArray(entry)) {
+    if (entry.length === 2 && entry.every((n) => Number.isInteger(Number(n)))) {
+      const start = Number(entry[0]);
+      const end = Number(entry[1]);
+      const list = [];
+      for (let i = Math.min(start, end); i <= Math.max(start, end); i += 1) {
+        list.push(i);
+      }
+      return list;
+    }
+    return entry.map((n) => Number(n));
+  }
+  if (entry && Array.isArray(entry.span)) {
+    return normalizeSpanList(entry.span);
+  }
+  return [];
+};
+
+const hydrateRationale = (r) => ({
+  bias_type: null,
+  spans: [],
+  triggers: [],
+  ...r,
+  spans: (r?.spans || []).map((s) => normalizeSpanList(s)),
+  triggers: (r?.triggers || []).map((t) => normalizeSpanList(t))
+});
+
 export const useAnnotationState = () => {
   const [sentences, setSentences] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -23,10 +51,7 @@ export const useAnnotationState = () => {
       const parsed = JSON.parse(saved);
       const hydrated = (parsed.sentences || []).map((s) => ({
         ...s,
-        rationales: (s.rationales || []).map((r) => ({
-          bias_type: null,
-          ...r
-        }))
+        rationales: (s.rationales || []).map((r) => hydrateRationale(r))
       }));
       setSentences(hydrated);
       setCurrentIndex(parsed.currentIndex || 0);
@@ -55,10 +80,7 @@ export const useAnnotationState = () => {
         id: row.id ?? `row-${idx + 1}`,
         tokens: row.tokens ?? [],
         text: row.text ?? (row.tokens ? row.tokens.join(' ') : ''),
-        rationales: (row.rationales || []).map((r) => ({
-          bias_type: null,
-          ...r
-        }))
+        rationales: (row.rationales || []).map((r) => hydrateRationale(r))
       }))
     );
     setCurrentIndex(0);

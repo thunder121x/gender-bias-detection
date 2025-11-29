@@ -20,21 +20,26 @@ const TokenAnnotator = ({
 
   const previewRange = normalizeRange(selection);
 
+  const flattenLists = (lists) =>
+    (lists || []).flatMap((l) => (Array.isArray(l) ? l : [l])).map((n) => Number(n));
+
   const { rationaleSet, triggerSet } = useMemo(() => {
     const rat = new Set();
     const trg = new Set();
 
-    const markRange = (set, [start, end]) => {
-      if (start === undefined || end === undefined) return;
-      for (let i = start; i <= end; i += 1) set.add(i);
+    const markList = (set, list) => {
+      list?.forEach((idx) => {
+        set.add(Number(idx));
+      });
     };
 
     (rationales || []).forEach((r) => {
-      (r.spans || []).forEach((range) => markRange(rat, range));
-      (r.triggers || []).forEach((t) => markRange(trg, t.span || []));
+      (r.spans || []).forEach((list) => markList(rat, list));
+      (r.triggers || []).forEach((list) => markList(trg, list));
     });
-    (currentRationale.spans || []).forEach((range) => markRange(rat, range));
-    (currentRationale.triggers || []).forEach((t) => markRange(trg, t.span || []));
+
+    markList(rat, flattenLists(currentRationale.spans));
+    markList(trg, flattenLists(currentRationale.triggers));
 
     return { rationaleSet: rat, triggerSet: trg };
   }, [rationales, currentRationale]);

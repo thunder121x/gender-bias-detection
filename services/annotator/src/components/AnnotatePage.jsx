@@ -28,8 +28,16 @@ const AnnotatePage = ({
     return () => window.removeEventListener('keydown', handleKey);
   }, [setMode, onNextSentence, onPrevSentence]);
 
+  const rangeToIndexList = (range) => {
+    const [start, end] = range;
+    const list = [];
+    for (let i = Math.min(start, end); i <= Math.max(start, end); i += 1) list.push(i);
+    return list;
+  };
+
   const handleAddSpan = (range) => {
     setMessage('');
+    const asList = rangeToIndexList(range);
     if (mode === 'trigger') {
       if (!currentRationale.id) {
         setMessage('Set a rationale ID before adding triggers.');
@@ -37,13 +45,13 @@ const AnnotatePage = ({
       }
       setCurrentRationale((prev) => ({
         ...prev,
-        triggers: [...(prev.triggers || []), { span: range }]
+        triggers: [...(prev.triggers || []), ...asList]
       }));
     } else {
       setCurrentRationale((prev) => ({
         ...prev,
         id: prev.id || nextRationaleId, // auto-assign if empty
-        spans: [...(prev.spans || []), range]
+        spans: [...(prev.spans || []), ...asList]
       }));
     }
   };
@@ -69,7 +77,14 @@ const AnnotatePage = ({
       setMessage('Add at least one trigger span.');
       return;
     }
-    onUpdateRationales((prev) => [...prev, { ...currentRationale }]);
+    onUpdateRationales((prev) => [
+      ...prev,
+      {
+        ...currentRationale,
+        spans: [currentRationale.spans || []],
+        triggers: [currentRationale.triggers || []]
+      }
+    ]);
     setCurrentRationale({ id: '', bias_type: null, spans: [], triggers: [] });
     setMode('rationale');
     setMessage('Rationale saved.');
@@ -85,22 +100,27 @@ const AnnotatePage = ({
     setMode('rationale');
   };
 
-  const flattened = useMemo(
+  const savedPreview = useMemo(
     () => ({
-      spans: [
-        ...(sentence.rationales || []).flatMap((r) => r.spans || []),
-        ...(currentRationale.spans || [])
-      ],
-      triggers: [
-        ...(sentence.rationales || []).flatMap((r) => r.triggers || []),
-        ...(currentRationale.triggers || [])
-      ],
-      bias_type: [
-        ...(sentence.rationales || []).map((r) => r.bias_type).filter(Boolean),
-        ...(currentRationale.bias_type ? [currentRationale.bias_type] : [])
-      ]
+      spans: [...(sentence.rationales || []).flatMap((r) => r.spans || [])],
+      triggers: [...(sentence.rationales || []).flatMap((r) => r.triggers || [])],
+      bias_type: [...(sentence.rationales || []).map((r) => r.bias_type).filter(Boolean)]
     }),
-    [sentence, currentRationale]
+    [sentence]
+  );
+
+  const flattenLists = (lists) =>
+    (lists || [])
+      .flatMap((entry) => (Array.isArray(entry) ? entry : [entry]))
+      .map((n) => Number(n));
+
+  const currentPreview = useMemo(
+    () => ({
+      spans: flattenLists(currentRationale.spans),
+      triggers: flattenLists(currentRationale.triggers),
+      bias_type: currentRationale.bias_type || null
+    }),
+    [currentRationale]
   );
 
   const biasColorClasses = (bias) => {
@@ -299,24 +319,42 @@ const AnnotatePage = ({
                   </div>
                   <div className="text-xs text-slate-500">#{idx + 1}</div>
                 </div>
-                <div className="text-xs text-slate-600 mt-1">
-                  Rationale spans: {rationale.spans?.length || 0} · Trigger spans:{' '}
-                  {rationale.triggers?.length || 0}
-                </div>
+              <div className="text-xs text-slate-600 mt-1">
+                Rationale spans: {rationale.spans?.length || 0} · Trigger spans:{' '}
+                {rationale.triggers?.length || 0}
               </div>
-            ))}
+              <div className="text-xs text-slate-500 mt-1">
+                Spans: {JSON.stringify(rationale.spans || [])}
+              </div>
+              <div className="text-xs text-slate-500">
+                Triggers: {JSON.stringify(rationale.triggers || [])}
+              </div>
+            </div>
+          ))}
           </div>
         </div>
 
         <div className="scroll-card p-4 text-sm text-slate-600">
-          <div className="font-semibold text-slate-800 mb-1">Current Sentence JSON</div>
+          <div className="font-semibold text-slate-800 mb-1">Saved Sentence JSON</div>
           <pre className="bg-slate-900 text-slate-100 p-3 rounded-lg overflow-auto text-xs">
             {JSON.stringify(
               {
                 tokens: sentence.tokens,
-                rationales: flattened.spans,
-                triggers: flattened.triggers,
-                bias_type: flattened.bias_type
+                rationales: savedPreview.spans,
+                triggers: savedPreview.triggers,
+                bias_type: savedPreview.bias_type
+              },
+              null,
+              2
+            )}
+          </pre>
+          <div className="font-semibold text-slate-800 mt-4 mb-1">Pending Rationale</div>
+          <pre className="bg-slate-900 text-slate-100 p-3 rounded-lg overflow-auto text-xs">
+            {JSON.stringify(
+              {
+                rationales: currentPreview.spans,
+                triggers: currentPreview.triggers,
+                bias_type: currentPreview.bias_type
               },
               null,
               2
