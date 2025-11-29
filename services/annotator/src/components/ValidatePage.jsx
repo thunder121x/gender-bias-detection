@@ -27,6 +27,25 @@ const ValidatePage = ({ sentence, onBack, onConfirm }) => {
     [sentence]
   );
 
+  const perRationale = useMemo(() => {
+    const rats = sentence.rationales || [];
+    return rats.map((r, idx) => {
+      const rationaleSet = new Set();
+      const triggerSet = new Set();
+      (r.spans || []).forEach((list) =>
+        list?.forEach((n) => rationaleSet.add(Number(n)))
+      );
+      (r.triggers || []).forEach((list) =>
+        list?.forEach((n) => triggerSet.add(Number(n)))
+      );
+      return {
+        bias: r.bias_type || exportPayload.bias_type[idx] || null,
+        rationaleSet,
+        triggerSet
+      };
+    });
+  }, [sentence, exportPayload.bias_type]);
+
   const downloadJSON = () => {
     const blob = new Blob([JSON.stringify(exportPayload, null, 2)], {
       type: 'application/json'
@@ -100,6 +119,51 @@ const ValidatePage = ({ sentence, onBack, onConfirm }) => {
             ))}
           </div>
         </div>
+
+        {perRationale.length > 0 &&
+          perRationale.length === exportPayload.bias_type.length &&
+          perRationale.length === (sentence.rationales || []).length && (
+            <div className="scroll-card p-4 space-y-3">
+              <div className="font-semibold text-slate-800">Per-rationale view</div>
+              {perRationale.map((entry, idx) => (
+                <div
+                  key={`rationale-${idx}`}
+                  className="border border-slate-200 rounded-lg p-3 bg-slate-50 space-y-2"
+                >
+                  <div className="flex items-center justify-between text-sm">
+                    <div className="font-medium text-slate-800">Rationale #{idx + 1}</div>
+                    <span
+                      className={clsx(
+                        'px-2 py-1 rounded text-xs font-semibold',
+                        entry.bias === 'stereotype'
+                          ? 'bg-blue-200 text-blue-900'
+                          : 'bg-rose-200 text-rose-900'
+                      )}
+                    >
+                      {entry.bias || 'n/a'}
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2 p-2 bg-white rounded border border-slate-200">
+                    {sentence.tokens.map((token, tIdx) => {
+                      const tokenClass = entry.triggerSet.has(tIdx)
+                        ? 'bg-trigger text-white'
+                        : entry.rationaleSet.has(tIdx)
+                        ? 'bg-rationale text-white'
+                        : 'bg-slate-100';
+                      return (
+                        <span
+                          key={`${token}-${tIdx}`}
+                          className={clsx('px-2 py-1 rounded token-span', tokenClass)}
+                        >
+                          {token}
+                        </span>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
 
         <div className="flex gap-3">
           <button
