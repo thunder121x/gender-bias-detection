@@ -23,9 +23,11 @@ const TokenAnnotator = ({
   const flattenLists = (lists) =>
     (lists || []).flatMap((l) => (Array.isArray(l) ? l : [l])).map((n) => Number(n));
 
-  const { rationaleSet, triggerSet } = useMemo(() => {
-    const rat = new Set();
-    const trg = new Set();
+  const { savedRat, savedTrg, pendingRat, pendingTrg } = useMemo(() => {
+    const savedRat = new Set();
+    const savedTrg = new Set();
+    const pendingRat = new Set();
+    const pendingTrg = new Set();
 
     const markList = (set, list) => {
       list?.forEach((idx) => {
@@ -34,14 +36,14 @@ const TokenAnnotator = ({
     };
 
     (rationales || []).forEach((r) => {
-      (r.spans || []).forEach((list) => markList(rat, list));
-      (r.triggers || []).forEach((list) => markList(trg, list));
+      (r.spans || []).forEach((list) => markList(savedRat, list));
+      (r.triggers || []).forEach((list) => markList(savedTrg, list));
     });
 
-    markList(rat, flattenLists(currentRationale.spans));
-    markList(trg, flattenLists(currentRationale.triggers));
+    markList(pendingRat, flattenLists(currentRationale.spans));
+    markList(pendingTrg, flattenLists(currentRationale.triggers));
 
-    return { rationaleSet: rat, triggerSet: trg };
+    return { savedRat, savedTrg, pendingRat, pendingTrg };
   }, [rationales, currentRationale]);
 
   useEffect(() => {
@@ -79,8 +81,10 @@ const TokenAnnotator = ({
     if (isInPreview(idx)) {
       return mode === 'trigger' ? 'bg-trigger-light' : 'bg-rationale-light';
     }
-    if (triggerSet.has(idx)) return 'bg-trigger text-white';
-    if (rationaleSet.has(idx)) return 'bg-rationale text-white';
+    if (pendingTrg.has(idx)) return 'bg-trigger text-white';
+    if (pendingRat.has(idx)) return 'bg-rationale text-white';
+    // if (savedTrg.has(idx)) return 'bg-trigger text-white';
+    // if (savedRat.has(idx)) return 'bg-rationale text-white';
     return 'bg-slate-100';
   };
 
