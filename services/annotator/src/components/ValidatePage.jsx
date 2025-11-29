@@ -5,13 +5,12 @@ const ValidatePage = ({ sentence, onBack, onConfirm }) => {
   const flattened = useMemo(() => {
     const rationaleSet = new Set();
     const triggerSet = new Set();
-    const markRange = (set, [start, end]) => {
-      if (start === undefined || end === undefined) return;
-      for (let i = start; i <= end; i += 1) set.add(i);
+    const markList = (set, list) => {
+      list?.forEach((idx) => set.add(Number(idx)));
     };
     (sentence.rationales || []).forEach((r) => {
-      (r.spans || []).forEach((range) => markRange(rationaleSet, range));
-      (r.triggers || []).forEach((t) => markRange(triggerSet, t.span || []));
+      (r.spans || []).forEach((list) => markList(rationaleSet, list));
+      (r.triggers || []).forEach((list) => markList(triggerSet, list));
     });
     return { rationaleSet, triggerSet };
   }, [sentence]);
@@ -20,9 +19,7 @@ const ValidatePage = ({ sentence, onBack, onConfirm }) => {
     () => ({
       tokens: sentence.tokens,
       rationales: (sentence.rationales || []).flatMap((r) => r.spans || []),
-      triggers: (sentence.rationales || []).flatMap((r) =>
-        (r.triggers || []).map((t) => ({ span: t.span }))
-      ),
+      triggers: (sentence.rationales || []).flatMap((r) => r.triggers || []),
       bias_type: (sentence.rationales || [])
         .map((r) => r.bias_type)
         .filter(Boolean)

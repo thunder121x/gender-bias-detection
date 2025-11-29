@@ -12,12 +12,8 @@ export const buildCSV = (sentences) => {
 
   sentences.forEach((sentence) => {
     const tokens = sentence.tokens || [];
-    const flattenedRationales = (sentence.rationales || []).flatMap(
-      (r) => r.spans || []
-    );
-    const flattenedTriggers = (sentence.rationales || []).flatMap((r) =>
-      (r.triggers || []).map((t) => ({ span: t.span }))
-    );
+    const flattenedRationales = (sentence.rationales || []).flatMap((r) => r.spans || []);
+    const flattenedTriggers = (sentence.rationales || []).flatMap((r) => r.triggers || []);
     const biasTypes = (sentence.rationales || [])
       .map((r) => r.bias_type)
       .filter(Boolean);
