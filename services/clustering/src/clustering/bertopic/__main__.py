@@ -5,7 +5,7 @@ from pathlib import Path
 
 import pandas as pd
 
-from .pipeline import DEFAULT_EMBEDDING_MODEL, TopicPipelineConfig, run_pipeline
+from . import DEFAULT_EMBEDDING_MODEL, TopicPipelineConfig, run_pipeline
 
 
 def _parse_nr_topics(raw: str) -> int | str | None:

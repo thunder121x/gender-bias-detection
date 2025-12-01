@@ -8,9 +8,9 @@ version = "0.0.1"
 authors = []
 description = "scraper module"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = ">=3.10"
 classifiers = ["Programming Language :: Python :: 3"]
-dependencies = ["yt_dlp","TikTokApi"]
+dependencies = ["yt_dlp","TikTokApi","pandas","pythainlp"]
 
 [project.optional-dependencies]
 dev = ["pre-commit", "ipykernel", "ipywidgets"]
