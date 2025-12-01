@@ -8,7 +8,7 @@ from bertopic import BERTopic
 from sentence_transformers import SentenceTransformer
 from sklearn.feature_extraction.text import CountVectorizer
 
-from .preprocessing import preprocess
+from ..utils.preprocessing import preprocess
 
 DEFAULT_BIAS_KEYWORDS: Tuple[str, ...] = (
     "ผู้หญิง",
