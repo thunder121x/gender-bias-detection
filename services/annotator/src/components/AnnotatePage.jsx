@@ -88,7 +88,13 @@ const AnnotatePage = ({
         triggers: [currentRationale.triggers || []]
       }
     ]);
-    setCurrentRationale({ id: '', bias_type: null, spans: [], triggers: [] });
+    setCurrentRationale({
+      id: '',
+      bias_type: null,
+      spans: [],
+      triggers: [],
+      decision_rule: []
+    });
     setMode('rationale');
     setMessage('Rationale saved.');
   };
@@ -98,7 +104,13 @@ const AnnotatePage = ({
   };
 
   const handleClearCurrent = () => {
-    setCurrentRationale({ id: '', bias_type: null, spans: [], triggers: [] });
+    setCurrentRationale({
+      id: '',
+      bias_type: null,
+      spans: [],
+      triggers: [],
+      decision_rule: []
+    });
     setMessage('');
     setMode('rationale');
   };
@@ -107,7 +119,12 @@ const AnnotatePage = ({
     () => ({
       spans: [...(sentence.rationales || []).flatMap((r) => r.spans || [])],
       triggers: [...(sentence.rationales || []).flatMap((r) => r.triggers || [])],
-      bias_type: [...(sentence.rationales || []).map((r) => r.bias_type).filter(Boolean)]
+      bias_type: [...(sentence.rationales || []).map((r) => r.bias_type).filter(Boolean)],
+      decision_rule: [
+        ...(sentence.rationales || [])
+          .map((r) => r.decision_rule || [])
+          .filter((rules) => (rules || []).length > 0)
+      ]
     }),
     [sentence]
   );
@@ -121,7 +138,8 @@ const AnnotatePage = ({
     () => ({
       spans: flattenLists(currentRationale.spans),
       triggers: flattenLists(currentRationale.triggers),
-      bias_type: currentRationale.bias_type || null
+      bias_type: currentRationale.bias_type || null,
+      decision_rule: currentRationale.decision_rule || []
     }),
     [currentRationale]
   );
@@ -289,6 +307,113 @@ const AnnotatePage = ({
             </div>
           </div>
 
+          <div>
+            <div className="text-sm font-medium text-slate-700 mb-2">
+              Decision Framework (multiple allowed)
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              {/* A — Gendered Target */}
+              <button
+                onClick={() => {
+                  setCurrentRationale((prev) => {
+                    const exists = prev.decision_rule?.includes("A");
+                    return {
+                      ...prev,
+                      decision_rule: exists
+                        ? prev.decision_rule.filter((x) => x !== "A")
+                        : [...(prev.decision_rule || []), "A"],
+                    };
+                  });
+                }}
+                className={`px-3 py-2 rounded-lg text-sm border transition ${
+                  currentRationale.decision_rule?.includes("A")
+                    ? "bg-blue-100 border-blue-300 text-blue-800"
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-blue-50"
+                }`}
+              >
+                A — Gendered Target
+                <span className="block text-xs text-slate-500">
+                  อ้างอิงเพศ / เพศสภาพ / SOGI
+                </span>
+              </button>
+
+              {/* B — Negative Evaluation */}
+              <button
+                onClick={() => {
+                  setCurrentRationale((prev) => {
+                    const exists = prev.decision_rule?.includes("B");
+                    return {
+                      ...prev,
+                      decision_rule: exists
+                        ? prev.decision_rule.filter((x) => x !== "B")
+                        : [...(prev.decision_rule || []), "B"],
+                    };
+                  });
+                }}
+                className={`px-3 py-2 rounded-lg text-sm border transition ${
+                  currentRationale.decision_rule?.includes("B")
+                    ? "bg-rose-100 border-rose-300 text-rose-800"
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-rose-50"
+                }`}
+              >
+                B — Negative Evaluation
+                <span className="block text-xs text-slate-500">
+                  ลดคุณค่า / เหยียด / เหมารวมเพราะเพศ
+                </span>
+              </button>
+
+              {/* C — Meta Commentary */}
+              <button
+                onClick={() => {
+                  setCurrentRationale((prev) => {
+                    const exists = prev.decision_rule?.includes("C");
+                    return {
+                      ...prev,
+                      decision_rule: exists
+                        ? prev.decision_rule.filter((x) => x !== "C")
+                        : [...(prev.decision_rule || []), "C"],
+                    };
+                  });
+                }}
+                className={`px-3 py-2 rounded-lg text-sm border transition ${
+                  currentRationale.decision_rule?.includes("C")
+                    ? "bg-purple-100 border-purple-300 text-purple-800"
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-purple-50"
+                }`}
+              >
+                C — Meta Commentary
+                <span className="block text-xs text-slate-500">
+                  วิจารณ์อคติ ไม่ใช่ผู้พูดเหยียดเอง
+                </span>
+              </button>
+
+              {/* D — Sexual Language Test */}
+              <button
+                onClick={() => {
+                  setCurrentRationale((prev) => {
+                    const exists = prev.decision_rule?.includes("D");
+                    return {
+                      ...prev,
+                      decision_rule: exists
+                        ? prev.decision_rule.filter((x) => x !== "D")
+                        : [...(prev.decision_rule || []), "D"],
+                    };
+                  });
+                }}
+                className={`px-3 py-2 rounded-lg text-sm border transition ${
+                  currentRationale.decision_rule?.includes("D")
+                    ? "bg-yellow-100 border-yellow-300 text-yellow-800"
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-yellow-50"
+                }`}
+              >
+                D — Sexual Language Test
+                <span className="block text-xs text-slate-500">
+                  ถ้อยคำลามกใช้เหยียด “กลุ่มเพศ” หรือเจาะจงบุคคล
+                </span>
+              </button>
+            </div>
+          </div>
 
           <div className="text-sm text-slate-600">
             <div>Rationale spans: {currentRationale.spans?.length || 0}</div>
@@ -365,6 +490,9 @@ const AnnotatePage = ({
                 <div className="text-xs text-slate-500">
                   Triggers: {JSON.stringify(rationale.triggers || [])}
                 </div>
+                <div className="text-xs text-slate-500">
+                  Decision: {JSON.stringify(rationale.decision_rule || [])}
+                </div>
               </div>
             ))}
           </div>
@@ -381,6 +509,7 @@ const AnnotatePage = ({
                 rationales: savedPreview.spans,
                 triggers: savedPreview.triggers,
                 bias_type: savedPreview.bias_type,
+                decision_rule: savedPreview.decision_rule,
               },
               null,
               2
@@ -395,6 +524,7 @@ const AnnotatePage = ({
                 rationales: currentPreview.spans,
                 triggers: currentPreview.triggers,
                 bias_type: currentPreview.bias_type,
+                decision_rule: currentPreview.decision_rule,
               },
               null,
               2
