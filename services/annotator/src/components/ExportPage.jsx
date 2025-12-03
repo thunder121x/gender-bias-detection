@@ -23,9 +23,10 @@ const ExportPage = ({ sentences, onReset }) => {
         <code className="font-mono text-sm">id</code>,{' '}
         <code className="font-mono text-sm">text</code>,{' '}
         <code className="font-mono text-sm">tokens</code>,{' '}
-        <code className="font-mono text-sm">rationales</code>, and{' '}
-        <code className="font-mono text-sm">triggers</code>, and{' '}
-        <code className="font-mono text-sm">bias_type</code>.
+        <code className="font-mono text-sm">rationales</code>,{' '}
+        <code className="font-mono text-sm">triggers</code>,{' '}
+        <code className="font-mono text-sm">bias_type</code>, and{' '}
+        <code className="font-mono text-sm">decision_rule</code>.
       </p>
 
       <div className="flex gap-3">

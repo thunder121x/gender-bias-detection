@@ -6,7 +6,8 @@ const emptyRationale = () => ({
   id: '',
   bias_type: null,
   spans: [],
-  triggers: []
+  triggers: [],
+  decision_rule: []
 });
 
 const normalizeSpanList = (entry) => {
@@ -28,13 +29,21 @@ const normalizeSpanList = (entry) => {
   return [];
 };
 
+const normalizeDecisionRule = (value) => {
+  if (!value) return [];
+  if (Array.isArray(value)) return value.map((v) => String(v));
+  return [String(value)];
+};
+
 const hydrateRationale = (r) => ({
   bias_type: null,
   spans: [],
   triggers: [],
+  decision_rule: [],
   ...r,
   spans: (r?.spans || []).map((s) => normalizeSpanList(s)),
-  triggers: (r?.triggers || []).map((t) => normalizeSpanList(t))
+  triggers: (r?.triggers || []).map((t) => normalizeSpanList(t)),
+  decision_rule: normalizeDecisionRule(r?.decision_rule || r?.decisionRule)
 });
 
 export const useAnnotationState = () => {
