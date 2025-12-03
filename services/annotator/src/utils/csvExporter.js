@@ -7,7 +7,15 @@ const escapeCell = (value) => {
 };
 
 export const buildCSV = (sentences) => {
-  const header = ['id', 'text', 'tokens', 'rationales', 'triggers', 'bias_type'];
+  const header = [
+    'id',
+    'text',
+    'tokens',
+    'rationales',
+    'triggers',
+    'bias_type',
+    'decision_rule'
+  ];
   const lines = [header.join(',')];
 
   sentences.forEach((sentence) => {
@@ -17,6 +25,7 @@ export const buildCSV = (sentences) => {
     const biasTypes = (sentence.rationales || [])
       .map((r) => r.bias_type)
       .filter(Boolean);
+    const decisionRules = (sentence.rationales || []).map((r) => r.decision_rule || []);
 
     const row = [
       escapeCell(sentence.id),
@@ -24,7 +33,8 @@ export const buildCSV = (sentences) => {
       escapeCell(JSON.stringify(tokens)),
       escapeCell(JSON.stringify(flattenedRationales)),
       escapeCell(JSON.stringify(flattenedTriggers)),
-      escapeCell(JSON.stringify(biasTypes))
+      escapeCell(JSON.stringify(biasTypes)),
+      escapeCell(JSON.stringify(decisionRules))
     ];
     lines.push(row.join(','));
   });

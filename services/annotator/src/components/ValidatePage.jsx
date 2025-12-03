@@ -22,7 +22,8 @@ const ValidatePage = ({ sentence, onBack, onConfirm }) => {
       triggers: (sentence.rationales || []).flatMap((r) => r.triggers || []),
       bias_type: (sentence.rationales || [])
         .map((r) => r.bias_type)
-        .filter(Boolean)
+        .filter(Boolean),
+      decision_rule: (sentence.rationales || []).map((r) => r.decision_rule || [])
     }),
     [sentence]
   );
