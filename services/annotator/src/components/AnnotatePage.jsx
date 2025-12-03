@@ -138,8 +138,12 @@ const AnnotatePage = ({
         <div className="scroll-card p-4">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-slate-500">Sentence {currentIndex + 1}</div>
-              <h2 className="text-xl font-semibold text-slate-800">Annotate Tokens</h2>
+              <div className="text-sm text-slate-500">
+                Sentence {currentIndex + 1}
+              </div>
+              <h2 className="text-xl font-semibold text-slate-800">
+                Annotate Tokens
+              </h2>
             </div>
             <div className="text-sm text-slate-500">
               Shortcuts: R (rationale) · T (trigger) · N (next) · P (prev)
@@ -192,21 +196,21 @@ const AnnotatePage = ({
             <h3 className="font-semibold text-slate-800">Current Rationale</h3>
             <div className="flex gap-2">
               <button
-                onClick={() => setMode('rationale')}
+                onClick={() => setMode("rationale")}
                 className={`px-3 py-1 rounded-lg text-sm ${
-                  mode === 'rationale'
-                    ? 'bg-rationale text-white'
-                    : 'bg-slate-100 text-slate-700'
+                  mode === "rationale"
+                    ? "bg-rationale text-white"
+                    : "bg-slate-100 text-slate-700"
                 }`}
               >
                 Rationale Mode (R)
               </button>
               <button
-                onClick={() => setMode('trigger')}
+                onClick={() => setMode("trigger")}
                 className={`px-3 py-1 rounded-lg text-sm ${
-                  mode === 'trigger'
-                    ? 'bg-trigger text-white'
-                    : 'bg-slate-100 text-slate-700'
+                  mode === "trigger"
+                    ? "bg-trigger text-white"
+                    : "bg-slate-100 text-slate-700"
                 }`}
               >
                 Trigger Mode (T)
@@ -228,34 +232,63 @@ const AnnotatePage = ({
           </label>
 
           <div>
-            <div className="text-sm font-medium text-slate-700 mb-2">Bias type</div>
+            <div className="text-sm font-medium text-slate-700 mb-2">
+              Bias type
+            </div>
             <div className="flex gap-2">
+              {/* GB-NORMATIVE */}
               <button
                 onClick={() =>
-                  setCurrentRationale((prev) => ({ ...prev, bias_type: 'stereotype' }))
+                  setCurrentRationale((prev) => ({
+                    ...prev,
+                    bias_type: "GB-NORMATIVE",
+                  }))
                 }
                 className={`px-3 py-2 rounded-lg text-sm border transition ${
-                  currentRationale.bias_type === 'stereotype'
-                    ? 'bg-blue-100 border-blue-300 text-blue-800'
-                    : 'bg-white border-slate-200 text-slate-700 hover:bg-blue-50'
+                  currentRationale.bias_type === "GB-NORMATIVE"
+                    ? "bg-blue-100 border-blue-300 text-blue-800"
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-blue-50"
                 }`}
               >
-                Gender Stereotypes
+                NORMATIVE
               </button>
+
+              {/* GB-ATTACK */}
               <button
                 onClick={() =>
-                  setCurrentRationale((prev) => ({ ...prev, bias_type: 'sexism' }))
+                  setCurrentRationale((prev) => ({
+                    ...prev,
+                    bias_type: "GB-ATTACK",
+                  }))
                 }
                 className={`px-3 py-2 rounded-lg text-sm border transition ${
-                  currentRationale.bias_type === 'sexism'
-                    ? 'bg-rose-100 border-rose-300 text-rose-800'
-                    : 'bg-white border-slate-200 text-slate-700 hover:bg-rose-50'
+                  currentRationale.bias_type === "GB-ATTACK"
+                    ? "bg-rose-100 border-rose-300 text-rose-800"
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-rose-50"
                 }`}
               >
-                Sexism / Derogatory
+                ATTACK
+              </button>
+
+              {/* GB-SEX */}
+              <button
+                onClick={() =>
+                  setCurrentRationale((prev) => ({
+                    ...prev,
+                    bias_type: "GB-SEX",
+                  }))
+                }
+                className={`px-3 py-2 rounded-lg text-sm border transition ${
+                  currentRationale.bias_type === "GB-SEX"
+                    ? "bg-purple-100 border-purple-300 text-purple-800"
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-purple-50"
+                }`}
+              >
+                SEX
               </button>
             </div>
           </div>
+
 
           <div className="text-sm text-slate-600">
             <div>Rationale spans: {currentRationale.spans?.length || 0}</div>
@@ -307,57 +340,61 @@ const AnnotatePage = ({
               >
                 <div className="flex items-center justify-between">
                   <div className="font-medium text-slate-800">
-                    ID: {rationale.id} · Type:{' '}
+                    ID: {rationale.id} · Type:{" "}
                     <span
                       className={`inline-flex items-center px-2 py-1 rounded text-xs font-semibold ${
-                        rationale.bias_type === 'stereotype'
-                          ? 'bg-blue-200 text-blue-900'
-                          : rationale.bias_type === 'sexism'
-                          ? 'bg-rose-200 text-rose-900'
-                          : 'bg-slate-200 text-slate-800'
+                        rationale.bias_type === "stereotype"
+                          ? "bg-blue-200 text-blue-900"
+                          : rationale.bias_type === "sexism"
+                          ? "bg-rose-200 text-rose-900"
+                          : "bg-slate-200 text-slate-800"
                       }`}
                     >
-                      {rationale.bias_type || 'n/a'}
+                      {rationale.bias_type || "n/a"}
                     </span>
                   </div>
                   <div className="text-xs text-slate-500">#{idx + 1}</div>
                 </div>
-              <div className="text-xs text-slate-600 mt-1">
-                Rationale spans: {rationale.spans?.length || 0} · Trigger spans:{' '}
-                {rationale.triggers?.length || 0}
+                <div className="text-xs text-slate-600 mt-1">
+                  Rationale spans: {rationale.spans?.length || 0} · Trigger
+                  spans: {rationale.triggers?.length || 0}
+                </div>
+                <div className="text-xs text-slate-500 mt-1">
+                  Spans: {JSON.stringify(rationale.spans || [])}
+                </div>
+                <div className="text-xs text-slate-500">
+                  Triggers: {JSON.stringify(rationale.triggers || [])}
+                </div>
               </div>
-              <div className="text-xs text-slate-500 mt-1">
-                Spans: {JSON.stringify(rationale.spans || [])}
-              </div>
-              <div className="text-xs text-slate-500">
-                Triggers: {JSON.stringify(rationale.triggers || [])}
-              </div>
-            </div>
-          ))}
+            ))}
           </div>
         </div>
 
         <div className="scroll-card p-4 text-sm text-slate-600">
-          <div className="font-semibold text-slate-800 mb-1">Saved Sentence JSON</div>
+          <div className="font-semibold text-slate-800 mb-1">
+            Saved Sentence JSON
+          </div>
           <pre className="bg-slate-900 text-slate-100 p-3 rounded-lg overflow-auto text-xs">
             {JSON.stringify(
               {
                 tokens: sentence.tokens,
                 rationales: savedPreview.spans,
                 triggers: savedPreview.triggers,
-                bias_type: savedPreview.bias_type
+                bias_type: savedPreview.bias_type,
               },
               null,
               2
             )}
           </pre>
-          <div className="font-semibold text-slate-800 mt-4 mb-1">Pending Rationale</div>
+          <div className="font-semibold text-slate-800 mt-4 mb-1">
+            Pending Rationale
+          </div>
           <pre className="bg-slate-900 text-slate-100 p-3 rounded-lg overflow-auto text-xs">
             {JSON.stringify(
               {
                 rationales: currentPreview.spans,
                 triggers: currentPreview.triggers,
-                bias_type: currentPreview.bias_type
+                bias_type: currentPreview.bias_type,
               },
               null,
               2
