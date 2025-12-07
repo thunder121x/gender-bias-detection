@@ -80,6 +80,23 @@ const AnnotatePage = ({
       setMessage('Add at least one trigger span.');
       return;
     }
+    if (
+      currentRationale.bias_type === "NON-GB" &&
+      (currentRationale.decision_rule?.includes("A") ||
+        currentRationale.decision_rule?.includes("B"))
+    ) {
+      setMessage(`${currentRationale.bias_type} cannot be A or B`);
+      return;
+    }
+
+    if (
+      currentRationale.bias_type !== "NON-GB" &&
+      (currentRationale.decision_rule?.includes("C") ||
+        currentRationale.decision_rule?.includes("D"))
+    ) {
+      setMessage(`${currentRationale.bias_type} cannot be C or D`);
+      return;
+    }
     onUpdateRationales((prev) => [
       ...prev,
       {
@@ -304,6 +321,23 @@ const AnnotatePage = ({
               >
                 SEX
               </button>
+
+              {/* NON-GB */}
+              <button
+                onClick={() =>
+                  setCurrentRationale((prev) => ({
+                    ...prev,
+                    bias_type: "NON-GB",
+                  }))
+                }
+                className={`px-3 py-2 rounded-lg text-sm border transition ${
+                  currentRationale.bias_type === "NON-GB"
+                    ? "bg-purple-100 border-purple-300 text-purple-800"
+                    : "bg-white border-slate-200 text-slate-700 hover:bg-purple-50"
+                }`}
+              >
+                NON-GB
+              </button>
             </div>
           </div>
 
@@ -407,9 +441,9 @@ const AnnotatePage = ({
                     : "bg-white border-slate-200 text-slate-700 hover:bg-yellow-50"
                 }`}
               >
-                D — Sexual Language Test
+                D - Gender Insult
                 <span className="block text-xs text-slate-500">
-                  ถ้อยคำลามกใช้เหยียด “กลุ่มเพศ” หรือเจาะจงบุคคล
+                  ด่าหรือวิพากษ์วิจารณ์โดยกล่าวถึงเพศ แต่ไม่เหยียดเพศ
                 </span>
               </button>
             </div>
