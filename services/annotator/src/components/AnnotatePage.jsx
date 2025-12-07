@@ -68,7 +68,7 @@ const AnnotatePage = ({
       setMessage('Rationale ID is required.');
       return;
     }
-    if (!currentRationale.bias_type) {
+    if (!currentRationale.label_type) {
       setMessage('Select a bias type.');
       return;
     }
@@ -81,20 +81,20 @@ const AnnotatePage = ({
       return;
     }
     if (
-      currentRationale.bias_type === "NON-GB" &&
+      currentRationale.label_type === "NON-GB" &&
       (currentRationale.decision_rule?.includes("A") ||
         currentRationale.decision_rule?.includes("B"))
     ) {
-      setMessage(`${currentRationale.bias_type} cannot be A or B`);
+      setMessage(`${currentRationale.label_type} cannot be A or B`);
       return;
     }
 
     if (
-      currentRationale.bias_type !== "NON-GB" &&
+      currentRationale.label_type !== "NON-GB" &&
       (currentRationale.decision_rule?.includes("C") ||
         currentRationale.decision_rule?.includes("D"))
     ) {
-      setMessage(`${currentRationale.bias_type} cannot be C or D`);
+      setMessage(`${currentRationale.label_type} cannot be C or D`);
       return;
     }
     onUpdateRationales((prev) => [
@@ -107,7 +107,7 @@ const AnnotatePage = ({
     ]);
     setCurrentRationale({
       id: '',
-      bias_type: null,
+      label_type: null,
       spans: [],
       triggers: [],
       decision_rule: []
@@ -123,7 +123,7 @@ const AnnotatePage = ({
   const handleClearCurrent = () => {
     setCurrentRationale({
       id: '',
-      bias_type: null,
+      label_type: null,
       spans: [],
       triggers: [],
       decision_rule: []
@@ -136,7 +136,7 @@ const AnnotatePage = ({
     () => ({
       spans: [...(sentence.rationales || []).flatMap((r) => r.spans || [])],
       triggers: [...(sentence.rationales || []).flatMap((r) => r.triggers || [])],
-      bias_type: [...(sentence.rationales || []).map((r) => r.bias_type).filter(Boolean)],
+      label_type: [...(sentence.rationales || []).map((r) => r.label_type).filter(Boolean)],
       decision_rule: [
         ...(sentence.rationales || [])
           .map((r) => r.decision_rule || [])
@@ -155,7 +155,7 @@ const AnnotatePage = ({
     () => ({
       spans: flattenLists(currentRationale.spans),
       triggers: flattenLists(currentRationale.triggers),
-      bias_type: currentRationale.bias_type || null,
+      label_type: currentRationale.label_type || null,
       decision_rule: currentRationale.decision_rule || []
     }),
     [currentRationale]
@@ -224,7 +224,7 @@ const AnnotatePage = ({
       <div className="space-y-4">
         <div
           className={`scroll-card p-4 space-y-3 border ${biasColorClasses(
-            currentRationale.bias_type
+            currentRationale.label_type
           )}`}
         >
           <div className="flex items-center justify-between">
@@ -268,7 +268,7 @@ const AnnotatePage = ({
 
           <div>
             <div className="text-sm font-medium text-slate-700 mb-2">
-              Bias type
+              Label type
             </div>
             <div className="flex gap-2">
               {/* GB-NORMATIVE */}
@@ -276,16 +276,16 @@ const AnnotatePage = ({
                 onClick={() =>
                   setCurrentRationale((prev) => ({
                     ...prev,
-                    bias_type: "GB-NORMATIVE",
+                    label_type: "GB-NORMATIVE",
                   }))
                 }
                 className={`px-3 py-2 rounded-lg text-sm border transition ${
-                  currentRationale.bias_type === "GB-NORMATIVE"
+                  currentRationale.label_type === "GB-NORMATIVE"
                     ? "bg-blue-100 border-blue-300 text-blue-800"
                     : "bg-white border-slate-200 text-slate-700 hover:bg-blue-50"
                 }`}
               >
-                NORMATIVE
+                GB-NORMATIVE
               </button>
 
               {/* GB-ATTACK */}
@@ -293,16 +293,16 @@ const AnnotatePage = ({
                 onClick={() =>
                   setCurrentRationale((prev) => ({
                     ...prev,
-                    bias_type: "GB-ATTACK",
+                    label_type: "GB-ATTACK",
                   }))
                 }
                 className={`px-3 py-2 rounded-lg text-sm border transition ${
-                  currentRationale.bias_type === "GB-ATTACK"
+                  currentRationale.label_type === "GB-ATTACK"
                     ? "bg-rose-100 border-rose-300 text-rose-800"
                     : "bg-white border-slate-200 text-slate-700 hover:bg-rose-50"
                 }`}
               >
-                ATTACK
+                GB-ATTACK
               </button>
 
               {/* GB-SEX */}
@@ -310,16 +310,16 @@ const AnnotatePage = ({
                 onClick={() =>
                   setCurrentRationale((prev) => ({
                     ...prev,
-                    bias_type: "GB-SEX",
+                    label_type: "GB-SEX",
                   }))
                 }
                 className={`px-3 py-2 rounded-lg text-sm border transition ${
-                  currentRationale.bias_type === "GB-SEX"
+                  currentRationale.label_type === "GB-SEX"
                     ? "bg-purple-100 border-purple-300 text-purple-800"
                     : "bg-white border-slate-200 text-slate-700 hover:bg-purple-50"
                 }`}
               >
-                SEX
+                GB-SEX
               </button>
 
               {/* NON-GB */}
@@ -327,11 +327,11 @@ const AnnotatePage = ({
                 onClick={() =>
                   setCurrentRationale((prev) => ({
                     ...prev,
-                    bias_type: "NON-GB",
+                    label_type: "NON-GB",
                   }))
                 }
                 className={`px-3 py-2 rounded-lg text-sm border transition ${
-                  currentRationale.bias_type === "NON-GB"
+                  currentRationale.label_type === "NON-GB"
                     ? "bg-purple-100 border-purple-300 text-purple-800"
                     : "bg-white border-slate-200 text-slate-700 hover:bg-purple-50"
                 }`}
@@ -494,7 +494,7 @@ const AnnotatePage = ({
               <div
                 key={`${rationale.id}-${idx}`}
                 className={`border rounded-lg p-3 ${biasColorClasses(
-                  rationale.bias_type
+                  rationale.label_type
                 )}`}
               >
                 <div className="flex items-center justify-between">
@@ -502,14 +502,14 @@ const AnnotatePage = ({
                     ID: {rationale.id} · Type:{" "}
                     <span
                       className={`inline-flex items-center px-2 py-1 rounded text-xs font-semibold ${
-                        rationale.bias_type === "stereotype"
+                        rationale.label_type === "stereotype"
                           ? "bg-blue-200 text-blue-900"
-                          : rationale.bias_type === "sexism"
+                          : rationale.label_type === "sexism"
                           ? "bg-rose-200 text-rose-900"
                           : "bg-slate-200 text-slate-800"
                       }`}
                     >
-                      {rationale.bias_type || "n/a"}
+                      {rationale.label_type || "n/a"}
                     </span>
                   </div>
                   <div className="text-xs text-slate-500">#{idx + 1}</div>
@@ -542,7 +542,7 @@ const AnnotatePage = ({
                 tokens: sentence.tokens,
                 rationales: savedPreview.spans,
                 triggers: savedPreview.triggers,
-                bias_type: savedPreview.bias_type,
+                label_type: savedPreview.label_type,
                 decision_rule: savedPreview.decision_rule,
               },
               null,
@@ -557,7 +557,7 @@ const AnnotatePage = ({
               {
                 rationales: currentPreview.spans,
                 triggers: currentPreview.triggers,
-                bias_type: currentPreview.bias_type,
+                label_type: currentPreview.label_type,
                 decision_rule: currentPreview.decision_rule,
               },
               null,

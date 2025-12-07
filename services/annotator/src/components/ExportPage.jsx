@@ -25,7 +25,7 @@ const ExportPage = ({ sentences, onReset }) => {
         <code className="font-mono text-sm">tokens</code>,{' '}
         <code className="font-mono text-sm">rationales</code>,{' '}
         <code className="font-mono text-sm">triggers</code>,{' '}
-        <code className="font-mono text-sm">bias_type</code>, and{' '}
+        <code className="font-mono text-sm">label_type</code>, and{' '}
         <code className="font-mono text-sm">decision_rule</code>.
       </p>
 

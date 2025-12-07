@@ -4,7 +4,7 @@ const STORAGE_KEY = 'annotator-state-v1';
 
 const emptyRationale = () => ({
   id: '',
-  bias_type: null,
+  label_type: null,
   spans: [],
   triggers: [],
   decision_rule: []
@@ -36,7 +36,7 @@ const normalizeDecisionRule = (value) => {
 };
 
 const hydrateRationale = (r) => ({
-  bias_type: null,
+  label_type: null,
   spans: [],
   triggers: [],
   decision_rule: [],

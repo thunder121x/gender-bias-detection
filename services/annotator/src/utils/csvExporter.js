@@ -13,7 +13,7 @@ export const buildCSV = (sentences) => {
     'tokens',
     'rationales',
     'triggers',
-    'bias_type',
+    'label_type',
     'decision_rule'
   ];
   const lines = [header.join(',')];
@@ -23,7 +23,7 @@ export const buildCSV = (sentences) => {
     const flattenedRationales = (sentence.rationales || []).flatMap((r) => r.spans || []);
     const flattenedTriggers = (sentence.rationales || []).flatMap((r) => r.triggers || []);
     const biasTypes = (sentence.rationales || [])
-      .map((r) => r.bias_type)
+      .map((r) => r.label_type)
       .filter(Boolean);
     const decisionRules = (sentence.rationales || []).map((r) => r.decision_rule || []);
 

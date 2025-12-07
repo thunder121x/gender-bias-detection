@@ -19,6 +19,6 @@ Open the printed localhost URL.
 3. Choose a bias type for the rationale: **Gender Stereotypes** or **Sexism / Derogatory**.
 4. Finish each rationale (requires id + bias type + ≥1 rationale span + ≥1 trigger span).
 4. Validate sentence, then move to next. Navigation shortcuts: `R` (rationale), `T` (trigger), `N` (next), `P` (previous).
-5. After all sentences, export CSV with `id,text,tokens,rationales,triggers,bias_type`.
+5. After all sentences, export CSV with `id,text,tokens,rationales,triggers,label_type`.
 
 State auto-saves to `localStorage`; use “Start Over” on the export page to reset. All operations run client-side only.
