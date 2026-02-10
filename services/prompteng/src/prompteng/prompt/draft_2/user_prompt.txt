@@ -3,7 +3,7 @@ You will receive a CSV chunk (header + rows). Annotate every row.
 Rules:
 1) Keep the same row order as the input.
 2) Output ONLY the reduced CSV with header:
-   id,wa_tokens,wa_rationales,wa_triggers,wa_label_type,wa_decision_rule,wa_binary
+   id,wa_rationales,wa_triggers,wa_label_type,wa_decision_rule,wa_binary
 3) Produce exactly one output row per input row.
 4) All wa_* columns must be JSON strings valid inside CSV cells.
 5) If the sentence is neutral / no gender content:
