@@ -79,12 +79,11 @@ You must output:
 Return **CSV text only** (no JSON, no explanations, no extra text).
 
 ### Output columns (exactly this header and order)
-id,wa_tokens,wa_rationales,wa_triggers,wa_label_type,wa_decision_rule,wa_binary
+id,wa_rationales,wa_triggers,wa_label_type,wa_decision_rule,wa_binary
 
 ### How to produce output rows
 For every input row, output exactly 1 CSV row containing:
 - `id`: copied from the input row
-- `wa_tokens`: JSON array of tokens (copied from input `tokens`)
 - `wa_rationales`: JSON array of rationale spans (each span is a JSON array of explicit indices)
 - `wa_triggers`: JSON array of trigger spans (each span is a JSON array of explicit indices)
 - `wa_label_type`: JSON array aligned to rationales (e.g., `["GB-NORMATIVE","GB-NORMATIVE"]`)
