@@ -1,0 +1,36 @@
+คุณจะได้รับอินพุตเป็น CSV (มี header + หลายแถวข้อมูล) โดยแต่ละแถวมีอย่างน้อย:
+- id
+- tokens (JSON array ของโทเคนภาษาไทย, index เริ่มที่ 0)
+อาจมีคอลัมน์อื่น เช่น text เพื่อช่วยตัดสินได้ แต่ span ต้องอ้างอิงเฉพาะ index ของ tokens
+
+งานของคุณ:
+1) ทำ annotation อคติทางเพศ/อคติ SOGI ตามกฎใน system prompt
+2) ส่งออกเป็น “CSV text เท่านั้น” โดยลดคอลัมน์ให้เหลือ:
+   id,wa_rationales,wa_triggers,wa_label_type,wa_decision_rule,wa_binary
+3) ต้องส่งออก 1 แถวต่อ 1 แถวอินพุตเสมอ (ห้ามข้ามแถว)
+
+รูปแบบค่าในคอลัมน์ wa_*:
+- wa_rationales = JSON array ของ spans (แต่ละ span เป็น list ของ token indices แบบ explicit)
+- wa_triggers   = JSON array ของ spans (แต่ละ span เป็น list ของ token indices แบบ explicit)
+- wa_label_type = JSON array ที่ align กับ rationales (เช่น ["GB-ATTACK"])
+- wa_decision_rule = JSON array ที่ align กับ rationales:
+  - GB: ["A","B"]
+  - NON-GB แบบ meta/counter: ["C"]
+  - NON-GB แบบด่าคนเดียวเชิงอ้างอิงเพศ: ["D"]
+- wa_binary = "GB" หรือ "NON-GB"
+
+กรณีไม่พบอคติและไม่ต้องทำ rationale:
+- wa_binary = "NON-GB"
+- wa_rationales = []
+- wa_triggers = []
+- wa_label_type = []
+- wa_decision_rule = []
+
+ข้อห้าม:
+- ห้ามใส่คำอธิบาย/ข้อความอื่นนอกเหนือจาก CSV
+- ห้ามส่ง JSON เดี่ยว ๆ
+- ห้ามเปลี่ยนชื่อคอลัมน์หรือสลับลำดับ header
+- ทุก span ต้องเป็น list ของ indices แบบ explicit เช่น [2,3,4] ไม่ใช่ [2,4]
+
+ต่อไปนี้คืออินพุต CSV ให้ทำงานกับทุกแถวและส่งออก CSV ตามรูปแบบที่กำหนด:
+<PASTE_INPUT_CSV_HERE>
