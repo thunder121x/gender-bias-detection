@@ -114,8 +114,8 @@ def main() -> None:
     parser.add_argument(
         "--model",
         type=str,
-        default="qwen2.5:7b",
-        help="Model name for Ollama (default: qwen2.5:7b)",
+        default="qwen2.5:7b-instruct",
+        help="Model name for Ollama (default: qwen2.5:7b-instruct)",
     )
     parser.add_argument(
         "--prompt",
@@ -133,7 +133,7 @@ def main() -> None:
         "--output_csv",
         type=str,
         required=False,
-        help="Output CSV to save results (default: OUTPUT_DIR/<input_name>_<model>_wa.csv)",
+        help="Output CSV to save results (default: OUTPUT_DIR/<input>_<model>_<prompt>.csv)",
     )
     parser.add_argument(
         "--autosave",
@@ -159,7 +159,7 @@ def main() -> None:
     else:
         input_name = Path(args.input_csv).stem
         safe_model = args.model.replace(":", "_")
-        output_csv = OUTPUT_DIR / f"{input_name}_{safe_model}_wa.csv"
+        output_csv = OUTPUT_DIR / f"{input_name}_{safe_model}_{args.prompt}.csv"
 
     autosave_path = output_csv.with_name(output_csv.stem + "_autosave.csv")
 

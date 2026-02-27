@@ -107,8 +107,8 @@ Same command for macOS / Linux / Windows:
 python annotate.py \
     --model qwen2.5:7b \
     --prompt draft_1 \
-    --input_csv assets/testset.csv \
-    --output_csv output/testset_qwen2.5_7b.csv \
+    --input_csv assets/sexual_language_short.csv \
+    --output_csv output/sexual_language_short_qwen2.5_7b.csv \
     --autosave
 
 Expected console output:
