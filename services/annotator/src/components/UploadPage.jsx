@@ -1,7 +1,11 @@
 import { useEffect } from 'react';
 import { useCSVLoader } from '../hooks/useCSVLoader';
 
-const UploadPage = ({ onLoaded }) => {
+const UploadPage = ({
+  onLoaded,
+  autoReviseThenAdd = false,
+  onToggleAutoReviseThenAdd
+}) => {
   const { rows, error, loading, loadFile, reset } = useCSVLoader();
 
   useEffect(() => {
@@ -22,12 +26,25 @@ const UploadPage = ({ onLoaded }) => {
             loaded for revision.
           </p>
         </div>
-        <button
-          onClick={reset}
-          className="text-sm text-slate-500 hover:text-slate-700 transition"
-        >
-          Reset
-        </button>
+        <div className="flex items-center gap-3">
+          <button
+            type="button"
+            onClick={onToggleAutoReviseThenAdd}
+            className={`px-3 py-1.5 rounded-lg text-sm border transition ${
+              autoReviseThenAdd
+                ? 'bg-emerald-100 border-emerald-300 text-emerald-800'
+                : 'bg-white border-slate-200 text-slate-700'
+            }`}
+          >
+            Auto revise then add new: {autoReviseThenAdd ? 'ON' : 'OFF'}
+          </button>
+          <button
+            onClick={reset}
+            className="text-sm text-slate-500 hover:text-slate-700 transition"
+          >
+            Reset
+          </button>
+        </div>
       </div>
 
       <label className="block border-2 border-dashed border-rose-200 rounded-xl p-10 text-center cursor-pointer hover:border-rose-300 transition bg-rose-50/40">

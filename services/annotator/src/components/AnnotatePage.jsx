@@ -11,6 +11,7 @@ const AnnotatePage = ({
   setCurrentRationale,
   onUpdateRationales,
   onFinishSentence,
+  disableExistingLabelPrompt = false,
   onReviseExistingLabel,
   onNextSentence,
   onPrevSentence
@@ -148,8 +149,12 @@ const AnnotatePage = ({
   };
 
   useEffect(() => {
+    if (disableExistingLabelPrompt) {
+      setShowExistingLabelPrompt(false);
+      return;
+    }
     setShowExistingLabelPrompt((sentence.rationales || []).length > 0);
-  }, [sentence.id]);
+  }, [sentence.id, disableExistingLabelPrompt]);
 
   useEffect(() => {
     const handleKey = (e) => {

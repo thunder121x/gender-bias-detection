@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import UploadPage from './components/UploadPage';
 import AnnotatePage from './components/AnnotatePage';
 import ValidatePage from './components/ValidatePage';
@@ -25,11 +25,26 @@ const App = () => {
     resetState
   } = useAnnotationState();
   const [reviseRationaleIndex, setReviseRationaleIndex] = useState(0);
+  const [reviseDoneTargetView, setReviseDoneTargetView] = useState('validate');
+  const [autoReviseThenAdd, setAutoReviseThenAdd] = useState(false);
+  const [autoRevisedSentenceIds, setAutoRevisedSentenceIds] = useState({});
 
   const currentSentence = useMemo(
     () => sentences[currentIndex] || null,
     [sentences, currentIndex]
   );
+
+  useEffect(() => {
+    if (view !== 'annotate' || !currentSentence || !autoReviseThenAdd) return;
+    const hasExisting = (currentSentence.rationales || []).length > 0;
+    const alreadyHandled = autoRevisedSentenceIds[currentSentence.id];
+    if (!hasExisting || alreadyHandled) return;
+
+    setAutoRevisedSentenceIds((prev) => ({ ...prev, [currentSentence.id]: true }));
+    setReviseRationaleIndex(0);
+    setReviseDoneTargetView('annotate');
+    setView('revise');
+  }, [view, currentSentence, autoReviseThenAdd, autoRevisedSentenceIds, setView]);
 
   return (
     <div className="min-h-screen">
@@ -40,7 +55,18 @@ const App = () => {
         </div>
       )}
       <main className="max-w-6xl mx-auto px-4 py-6">
-        {view === 'upload' && <UploadPage onLoaded={loadSentences} />}
+        {view === 'upload' && (
+          <UploadPage
+            onLoaded={(rows) => {
+              setAutoRevisedSentenceIds({});
+              loadSentences(rows);
+            }}
+            autoReviseThenAdd={autoReviseThenAdd}
+            onToggleAutoReviseThenAdd={() =>
+              setAutoReviseThenAdd((prev) => !prev)
+            }
+          />
+        )}
 
         {view === 'annotate' && currentSentence && (
           <AnnotatePage
@@ -53,8 +79,10 @@ const App = () => {
             setCurrentRationale={setCurrentRationale}
             onUpdateRationales={updateRationalesForCurrent}
             onFinishSentence={() => setView('validate')}
+            disableExistingLabelPrompt={autoReviseThenAdd}
             onReviseExistingLabel={(rationaleIndex = 0) => {
               setReviseRationaleIndex(rationaleIndex);
+              setReviseDoneTargetView('validate');
               setView('revise');
             }}
             onNextSentence={goToNextSentence}
@@ -68,7 +96,7 @@ const App = () => {
             initialRationaleIndex={reviseRationaleIndex}
             onUpdateRationales={updateRationalesForCurrent}
             onBack={() => setView('annotate')}
-            onDone={() => setView('validate')}
+            onDone={() => setView(reviseDoneTargetView)}
           />
         )}
 
@@ -81,7 +109,13 @@ const App = () => {
         )}
 
         {view === 'export' && (
-          <ExportPage sentences={sentences} onReset={() => resetState()} />
+          <ExportPage
+            sentences={sentences}
+            onReset={() => {
+              setAutoRevisedSentenceIds({});
+              resetState();
+            }}
+          />
         )}
       </main>
     </div>
