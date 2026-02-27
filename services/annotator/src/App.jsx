@@ -1,7 +1,8 @@
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import UploadPage from './components/UploadPage';
 import AnnotatePage from './components/AnnotatePage';
 import ValidatePage from './components/ValidatePage';
+import ReviseLabelPage from './components/ReviseLabelPage';
 import ExportPage from './components/ExportPage';
 import Navbar from './components/Navbar';
 import ProgressBar from './components/ProgressBar';
@@ -23,6 +24,7 @@ const App = () => {
     setView,
     resetState
   } = useAnnotationState();
+  const [reviseRationaleIndex, setReviseRationaleIndex] = useState(0);
 
   const currentSentence = useMemo(
     () => sentences[currentIndex] || null,
@@ -51,8 +53,22 @@ const App = () => {
             setCurrentRationale={setCurrentRationale}
             onUpdateRationales={updateRationalesForCurrent}
             onFinishSentence={() => setView('validate')}
+            onReviseExistingLabel={(rationaleIndex = 0) => {
+              setReviseRationaleIndex(rationaleIndex);
+              setView('revise');
+            }}
             onNextSentence={goToNextSentence}
             onPrevSentence={goToPreviousSentence}
+          />
+        )}
+
+        {view === 'revise' && currentSentence && (
+          <ReviseLabelPage
+            sentence={currentSentence}
+            initialRationaleIndex={reviseRationaleIndex}
+            onUpdateRationales={updateRationalesForCurrent}
+            onBack={() => setView('annotate')}
+            onDone={() => setView('validate')}
           />
         )}
 

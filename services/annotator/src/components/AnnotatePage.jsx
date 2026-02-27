@@ -11,22 +11,37 @@ const AnnotatePage = ({
   setCurrentRationale,
   onUpdateRationales,
   onFinishSentence,
+  onReviseExistingLabel,
   onNextSentence,
   onPrevSentence
 }) => {
   const [message, setMessage] = useState('');
+  const [showExistingLabelPrompt, setShowExistingLabelPrompt] = useState(false);
 
-  useEffect(() => {
-    const handleKey = (e) => {
-      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      if (e.key.toLowerCase() === 'r') setMode('rationale');
-      if (e.key.toLowerCase() === 't') setMode('trigger');
-      if (e.key.toLowerCase() === 'n') onNextSentence();
-      if (e.key.toLowerCase() === 'p') onPrevSentence();
-    };
-    window.addEventListener('keydown', handleKey);
-    return () => window.removeEventListener('keydown', handleKey);
-  }, [setMode, onNextSentence, onPrevSentence]);
+  const LABEL_CYCLE = ['GB-NORMATIVE', 'GB-ATTACK', 'GB-SEX', 'NON-GB'];
+
+  const cycleLabelType = () => {
+    setCurrentRationale((prev) => {
+      const currentIndex = LABEL_CYCLE.indexOf(prev.label_type);
+      const nextIndex =
+        currentIndex === -1
+          ? 0
+          : (currentIndex + 1) % LABEL_CYCLE.length;
+      return { ...prev, label_type: LABEL_CYCLE[nextIndex] };
+    });
+  };
+
+  const toggleDecisionRule = (rule) => {
+    setCurrentRationale((prev) => {
+      const exists = prev.decision_rule?.includes(rule);
+      return {
+        ...prev,
+        decision_rule: exists
+          ? prev.decision_rule.filter((x) => x !== rule)
+          : [...(prev.decision_rule || []), rule]
+      };
+    });
+  };
 
   const rangeToIndexList = (range) => {
     const [start, end] = range;
@@ -132,6 +147,42 @@ const AnnotatePage = ({
     setMode('rationale');
   };
 
+  useEffect(() => {
+    setShowExistingLabelPrompt((sentence.rationales || []).length > 0);
+  }, [sentence.id]);
+
+  useEffect(() => {
+    const handleKey = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+      const key = e.key.toLowerCase();
+      // if (e.ctrlKey) return;
+      if (key === "r" && !e.ctrlKey) setMode("rationale");
+      if (key === "t" && !e.ctrlKey) setMode("trigger");
+      if (key === "n" && !e.ctrlKey) onNextSentence();
+      if (key === "p" && !e.ctrlKey) onPrevSentence();
+      if (key === "l" && !e.ctrlKey) cycleLabelType();
+      if (key === "a" && !e.ctrlKey) toggleDecisionRule("A");
+      if (key === "b" && !e.ctrlKey) toggleDecisionRule("B");
+      if (key === 'c' && e.shiftKey) {
+        handleClearCurrent();
+        return;
+      }
+      if (key === "c" && !e.ctrlKey) toggleDecisionRule("C");
+      if (key === "d" && !e.ctrlKey) toggleDecisionRule("D");
+      if (key === "f" && !e.ctrlKey) handleFinishRationale();
+    };
+    window.addEventListener('keydown', handleKey);
+    return () => window.removeEventListener('keydown', handleKey);
+  }, [
+    setMode,
+    onNextSentence,
+    onPrevSentence,
+    cycleLabelType,
+    toggleDecisionRule,
+    handleClearCurrent,
+    handleFinishRationale
+  ]);
+
   const savedPreview = useMemo(
     () => ({
       spans: [...(sentence.rationales || []).flatMap((r) => r.spans || [])],
@@ -171,20 +222,45 @@ const AnnotatePage = ({
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
       <div className="lg:col-span-2 space-y-4">
         <div className="scroll-card p-4">
-          <div className="flex items-center justify-between">
+          <div className="flex items-start justify-between">
+            {/* Left Section */}
             <div>
               <div className="text-sm text-slate-500">
                 Sentence {currentIndex + 1}
               </div>
-              <h2 className="text-xl font-semibold text-slate-800">
+              <h2 className="text-2xl font-bold text-slate-800 leading-tight">
                 Annotate Tokens
               </h2>
             </div>
-            <div className="text-sm text-slate-500">
-              Shortcuts: R (rationale) · T (trigger) · N (next) · P (prev)
+
+            {/* Shortcut Section */}
+            <div className="text-xs text-slate-600 space-y-1 text-right max-w-xs">
+
+              <div className="font-semibold text-slate-700">Shortcuts</div>
+
+              <div className="flex flex-wrap gap-1 justify-end">
+                <span className="px-2 py-0.5 bg-slate-100 rounded text-slate-700">R = rationale</span>
+                <span className="px-2 py-0.5 bg-slate-100 rounded text-slate-700">T = trigger</span>
+                <span className="px-2 py-0.5 bg-slate-100 rounded text-slate-700">L = cycle label</span>
+              </div>
+
+              <div className="flex flex-wrap gap-1 justify-end">
+                <span className="px-2 py-0.5 bg-blue-100 text-blue-700 rounded">A/B/C/D = decision</span>
+                <span className="px-2 py-0.5 bg-emerald-100 text-emerald-700 rounded">F = finish</span>
+              </div>
+
+              <div className="flex flex-wrap gap-1 justify-end">
+                <span className="px-2 py-0.5 bg-rose-100 text-rose-700 rounded">Shift+C = clear</span>
+                <span className="px-2 py-0.5 bg-slate-200 text-slate-700 rounded">N = next</span>
+                <span className="px-2 py-0.5 bg-slate-200 text-slate-700 rounded">P = prev</span>
+              </div>
+
             </div>
           </div>
-          <p className="mt-2 text-slate-600">{sentence.text}</p>
+
+          <p className="mt-3 text-slate-700 text-lg leading-relaxed">
+            {sentence.text}
+          </p>
         </div>
 
         <TokenAnnotator
@@ -527,6 +603,13 @@ const AnnotatePage = ({
                 <div className="text-xs text-slate-500">
                   Decision: {JSON.stringify(rationale.decision_rule || [])}
                 </div>
+                <button
+                  type="button"
+                  onClick={() => onReviseExistingLabel?.(idx)}
+                  className="mt-2 text-xs text-rose-600 hover:text-rose-700"
+                >
+                  Revise this rationale
+                </button>
               </div>
             ))}
           </div>
@@ -566,6 +649,41 @@ const AnnotatePage = ({
           </pre>
         </div>
       </div>
+
+      {showExistingLabelPrompt && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/45 px-4">
+          <div className="w-full max-w-md rounded-xl bg-white border border-slate-200 shadow-lg p-5 space-y-4">
+            <div>
+              <h3 className="text-lg font-semibold text-slate-800">
+                Existing label found
+              </h3>
+              <p className="text-sm text-slate-600 mt-1">
+                This sentence already has saved labels. Choose whether to add a
+                new label or revise existing labels.
+              </p>
+            </div>
+            <div className="flex gap-2">
+              <button
+                type="button"
+                onClick={() => setShowExistingLabelPrompt(false)}
+                className="px-3 py-2 rounded-lg bg-slate-900 text-white hover:bg-slate-800 transition"
+              >
+                Add New Label
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setShowExistingLabelPrompt(false);
+                  onReviseExistingLabel?.(0);
+                }}
+                className="px-3 py-2 rounded-lg bg-white border border-slate-200 text-slate-700 hover:bg-slate-50 transition"
+              >
+                Revise Label
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

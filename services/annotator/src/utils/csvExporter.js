@@ -11,10 +11,11 @@ export const buildCSV = (sentences) => {
     'id',
     'text',
     'tokens',
-    'rationales',
-    'triggers',
-    'label_type',
-    'decision_rule'
+    'wa_rationales',
+    'wa_triggers',
+    'wa_label_type',
+    'wa_decision_rule',
+    'wa_binary'
   ];
   const lines = [header.join(',')];
 
@@ -22,10 +23,12 @@ export const buildCSV = (sentences) => {
     const tokens = sentence.tokens || [];
     const flattenedRationales = (sentence.rationales || []).flatMap((r) => r.spans || []);
     const flattenedTriggers = (sentence.rationales || []).flatMap((r) => r.triggers || []);
-    const biasTypes = (sentence.rationales || [])
+    const labelTypes = (sentence.rationales || [])
       .map((r) => r.label_type)
       .filter(Boolean);
     const decisionRules = (sentence.rationales || []).map((r) => r.decision_rule || []);
+    const hasGB = labelTypes.some((type) => type && type !== 'NON-GB');
+    const waBinary = hasGB ? 'GB' : 'NON-GB';
 
     const row = [
       escapeCell(sentence.id),
@@ -33,8 +36,9 @@ export const buildCSV = (sentences) => {
       escapeCell(JSON.stringify(tokens)),
       escapeCell(JSON.stringify(flattenedRationales)),
       escapeCell(JSON.stringify(flattenedTriggers)),
-      escapeCell(JSON.stringify(biasTypes)),
-      escapeCell(JSON.stringify(decisionRules))
+      escapeCell(JSON.stringify(labelTypes)),
+      escapeCell(JSON.stringify(decisionRules)),
+      escapeCell(waBinary)
     ];
     lines.push(row.join(','));
   });

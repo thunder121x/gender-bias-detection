@@ -16,15 +16,21 @@ const ValidatePage = ({ sentence, onBack, onConfirm }) => {
   }, [sentence]);
 
   const exportPayload = useMemo(
-    () => ({
-      tokens: sentence.tokens,
-      rationales: (sentence.rationales || []).flatMap((r) => r.spans || []),
-      triggers: (sentence.rationales || []).flatMap((r) => r.triggers || []),
-      label_type: (sentence.rationales || [])
+    () => {
+      const waLabelType = (sentence.rationales || [])
         .map((r) => r.label_type)
-        .filter(Boolean),
-      decision_rule: (sentence.rationales || []).map((r) => r.decision_rule || [])
-    }),
+        .filter(Boolean);
+      return {
+        id: sentence.id,
+        text: sentence.text,
+        tokens: sentence.tokens,
+        wa_rationales: (sentence.rationales || []).flatMap((r) => r.spans || []),
+        wa_triggers: (sentence.rationales || []).flatMap((r) => r.triggers || []),
+        wa_label_type: waLabelType,
+        wa_decision_rule: (sentence.rationales || []).map((r) => r.decision_rule || []),
+        wa_binary: waLabelType.some((x) => x && x !== 'NON-GB') ? 'GB' : 'NON-GB'
+      };
+    },
     [sentence]
   );
 
@@ -40,12 +46,12 @@ const ValidatePage = ({ sentence, onBack, onConfirm }) => {
         list?.forEach((n) => triggerSet.add(Number(n)))
       );
       return {
-        bias: r.label_type || exportPayload.label_type[idx] || null,
+        bias: r.label_type || exportPayload.wa_label_type[idx] || null,
         rationaleSet,
         triggerSet
       };
     });
-  }, [sentence, exportPayload.label_type]);
+  }, [sentence, exportPayload.wa_label_type]);
 
   const downloadJSON = () => {
     const blob = new Blob([JSON.stringify(exportPayload, null, 2)], {
@@ -87,12 +93,12 @@ const ValidatePage = ({ sentence, onBack, onConfirm }) => {
           </div>
           <p className="mt-2 text-slate-600">{sentence.text}</p>
           <div className="mt-3 flex flex-wrap gap-2 text-xs">
-            {(exportPayload.label_type || []).length === 0 ? (
+            {(exportPayload.wa_label_type || []).length === 0 ? (
               <span className="px-2 py-1 rounded bg-slate-100 text-slate-600">
                 No bias type selected
               </span>
             ) : (
-              exportPayload.label_type.map((bias, idx) => (
+              exportPayload.wa_label_type.map((bias, idx) => (
                 <span
                   key={`${bias}-${idx}`}
                   className={`px-2 py-1 rounded font-semibold ${
@@ -122,7 +128,7 @@ const ValidatePage = ({ sentence, onBack, onConfirm }) => {
         </div>
 
         {perRationale.length > 0 &&
-          perRationale.length === exportPayload.label_type.length &&
+          perRationale.length === exportPayload.wa_label_type.length &&
           perRationale.length === (sentence.rationales || []).length && (
             <div className="scroll-card p-4 space-y-3">
               <div className="font-semibold text-slate-800">Per-rationale view</div>

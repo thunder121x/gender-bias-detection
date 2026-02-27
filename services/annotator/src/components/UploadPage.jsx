@@ -18,6 +18,8 @@ const UploadPage = ({ onLoaded }) => {
           <p className="text-slate-600 mt-1">
             Provide a CSV with <code className="font-mono text-sm">id</code> and{' '}
             <code className="font-mono text-sm">tokens</code> columns to begin.
+            Existing <code className="font-mono text-sm">wa_*</code> labels are
+            loaded for revision.
           </p>
         </div>
         <button

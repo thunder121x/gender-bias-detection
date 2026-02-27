@@ -21,12 +21,13 @@ const ExportPage = ({ sentences, onReset }) => {
       <p className="text-slate-600">
         Download the final annotations as CSV. Each row contains{' '}
         <code className="font-mono text-sm">id</code>,{' '}
-        <code className="font-mono text-sm">text</code>,{' '}
-        <code className="font-mono text-sm">tokens</code>,{' '}
-        <code className="font-mono text-sm">rationales</code>,{' '}
-        <code className="font-mono text-sm">triggers</code>,{' '}
-        <code className="font-mono text-sm">label_type</code>, and{' '}
-        <code className="font-mono text-sm">decision_rule</code>.
+        <code className="font-mono text-sm">text</code>, and{' '}
+        <code className="font-mono text-sm">tokens</code> plus WebAnnotator
+        columns: <code className="font-mono text-sm">wa_rationales</code>,{' '}
+        <code className="font-mono text-sm">wa_triggers</code>,{' '}
+        <code className="font-mono text-sm">wa_label_type</code>,{' '}
+        <code className="font-mono text-sm">wa_decision_rule</code>, and{' '}
+        <code className="font-mono text-sm">wa_binary</code>.
       </p>
 
       <div className="flex gap-3">
