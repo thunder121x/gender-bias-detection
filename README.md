@@ -46,27 +46,17 @@ inference web app (Flask)              services/inference_app
 
 ## Data & Models
 
-**Models are published on Hugging Face** — no Google Drive needed to run anything:
+**Models and training data are published on Hugging Face** — everything needed
+to run or retrain:
 
-| Model | Hugging Face |
-|-------|--------------|
+| Artifact | Hugging Face |
+|----------|--------------|
 | MiniLM gender-bias classifier | [thunder121x/thai-gender-bias-classifier-minilm](https://huggingface.co/thunder121x/thai-gender-bias-classifier-minilm) |
 | Qwen 3.5 2B span-extraction LoRA | [thunder121x/thai-gender-bias-span-extraction-qwen3.5-2b](https://huggingface.co/thunder121x/thai-gender-bias-span-extraction-qwen3.5-2b) |
+| Fine-tuning training data | [thunder121x/thai-gender-bias-training-data](https://huggingface.co/datasets/thunder121x/thai-gender-bias-training-data) |
+| CREST base model (upstream) | [repelloai/CREST-Base](https://huggingface.co/repelloai/CREST-Base) |
 
 See [models/README.md](models/README.md) for loading options.
-
-Raw data and intermediate artifacts (training data, outputs, scraped CSVs,
-base model for retraining) are archived on Google Drive — only needed for
-reproducing training, not for inference:
-
-**Drive folder:** `<DRIVE_LINK>` <!-- paste share link after upload -->
-
-| Drive path | Contents |
-|------------|----------|
-| `training_data/` | Fine-tuning train/val JSONL |
-| `outputs/` | Synthesis outputs, visualization assets, analysis results |
-| `scraper_data/` | Raw scraped tweets, post-processed clustering input |
-| `models/` | Training checkpoints + CREST base model (final models are on HF) |
 
 Small annotated datasets (~3MB) are tracked in [data/](data/).
 

@@ -1,8 +1,8 @@
 """Example: run the BERTopic clustering pipeline on scraped text.
 
 The input CSV (postprocessed_output.csv, ~80MB) is not stored in git;
-download it from the project Google Drive (see root README, Data & Models)
-and pass its path as the first argument.
+it is produced by the scraper post-processing step — pass its path as
+the first argument.
 """
 
 import sys

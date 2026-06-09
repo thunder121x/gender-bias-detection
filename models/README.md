@@ -1,7 +1,7 @@
 # Models
 
 Model weights are **not stored in git**. Both fine-tuned models are published on
-Hugging Face — no Google Drive needed:
+Hugging Face:
 
 | Model | Hugging Face |
 |-------|--------------|
@@ -48,8 +48,8 @@ models/
 └── gender_bias_qwen35_2b_unsloth/  # LoRA adapter — used by services/lora_finetuning
 ```
 
-## Not on Hugging Face
+## Related Hugging Face repos
 
-- `crest_base_local/` (base model for retraining) and intermediate training
-  checkpoints remain on the project Google Drive only — needed for retraining,
-  not for inference.
+- Base model for retraining: [repelloai/CREST-Base](https://huggingface.co/repelloai/CREST-Base)
+  (the local `crest_base_local/` copy was just a cache of this)
+- Training data: [thunder121x/thai-gender-bias-training-data](https://huggingface.co/datasets/thunder121x/thai-gender-bias-training-data)

@@ -44,8 +44,8 @@ class Config:
     num_train_epochs: int = 3
     warmup_steps: int = 100
     
-    # Paths — training_data/ is restored from the project Google Drive
-    # (see root README, Data & Models) before running
+    # Paths — download training_data/ from the HF dataset
+    # thunder121x/thai-gender-bias-training-data before running
     train_file: str = "training_data/train.jsonl"
     val_file: str = "training_data/val.jsonl"
     output_dir: str = "qwen_gb_detector_lora"
