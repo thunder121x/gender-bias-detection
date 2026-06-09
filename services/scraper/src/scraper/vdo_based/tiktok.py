@@ -41,7 +41,7 @@ class TikTokScraper:
                     "--disable-infobars",
                     "--window-size=1280,800"
                 ],
-                starting_url="https://www.tiktok.com/@tiktok"
+                starting_url=f"https://www.tiktok.com/@tiktok/video/{self.video_id}"
             )
 
             video = api.video(id=self.video_id)

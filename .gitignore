@@ -1,8 +1,30 @@
+# Secrets / environment
+.env
+.env.*
+!.env.example
+
+# Drive staging & local-only artifacts
+_to_drive/
+models/*
+!models/README.md
+chrome_profile/
+.synth_checkpoints/
+lora_checkpoints/
+*.safetensors
+checkpoint-*/
+wandb/
+
+# Agent / tooling state
+.claude/
+.agents/
+skills-lock.json
+
 # Python
 __pycache__/
 *.py[cod]
 *$py.class
 
+# Selenium browser profiles
 Default/
 Profile*/
 User Data/
@@ -21,6 +43,9 @@ dist/
 *.egg-info/
 .eggs/
 *.egg
+
+# Node
+node_modules/
 
 # IDE / Editor
 .vscode/
@@ -47,9 +72,6 @@ htmlcov/
 
 # Jupyter / IPython
 .ipynb_checkpoints/
-
-# never push Jupyter
-.ipynb
 
 # Temporary
 *.tmp

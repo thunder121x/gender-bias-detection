@@ -11,7 +11,7 @@ pip install -e .
 python -m clustering.bertopic --input ../testset.csv --text-column text --output-csv assets/bertopic_output.csv --model-dir assets/bertopic_thai_gender_bias
 
 # Lightweight LDA topic modeling (no BERTopic dependency)
-python -m clustering.topicmodeling --input ../testset.csv --text-column text --output-csv assets/topicmodeling_output.csv --n-topics 12
+python -m clustering.topicmodeling --input assets/postprocessed_output.csv --text-column text --output-csv outputs/topicmodeling_output.csv --n-topics 12
 ```
 
 This writes per-document topics to `assets/bertopic_output.csv`, saves the trained model, and prints detected bias topics.

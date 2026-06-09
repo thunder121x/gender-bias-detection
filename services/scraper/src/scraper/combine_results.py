@@ -33,6 +33,7 @@ def combine_all_csv(base_dir=OUTPUT_DIR, output_path=Path(OUTPUT_DIR,"combined_o
     # Combine into one dataframe
     combined_df = pd.concat(df_list, ignore_index=True)
 
+    combined_df = combined_df.drop_duplicates()
     # Save final file
     combined_df.to_csv(output_path, index=False, encoding="utf-8-sig")
 

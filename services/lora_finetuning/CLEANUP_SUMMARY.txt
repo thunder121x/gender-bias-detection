@@ -1,0 +1,124 @@
+================================================================================
+DEPLOYMENT CLEANUP SUMMARY
+================================================================================
+Date: April 22, 2026
+Status: ✅ READY FOR VM DEPLOYMENT
+
+================================================================================
+REMOVED (To Streamline for Production)
+================================================================================
+
+Directories:
+  ❌ src/                    [Duplicate implementation with data_converter, train_lora, inference]
+  ❌ scripts/                [Jupyter notebook (qwen_lora_training.ipynb) - not needed]
+  ❌ data/                   [Empty directory]
+  ❌ logs/                   [Empty directory]
+  ❌ models/                 [Empty directory]
+  ❌ __pycache__/            [Python cache files]
+
+Duplicate Documentation:
+  ❌ FINETUNING_GUIDE.md
+  ❌ FINETUNING_README.md
+  ❌ IMPLEMENTATION_SUMMARY.md
+  ❌ INDEX.md
+  ❌ LORA_FINETUNING_GUIDE.md
+  ❌ QUICK_REFERENCE.txt
+  ❌ QUICKSTART.md
+  ❌ SETUP_SUMMARY.md
+  ❌ WORKFLOW.txt
+
+Result: Reduced clutter, single source of truth for docs
+
+================================================================================
+KEPT (Production-Ready Core)
+================================================================================
+
+Python Scripts (1,354 lines total):
+  ✅ manage.py                      [185 lines] - Entry point, interactive menu
+  ✅ finetune_qwen_span_detector.py [369 lines] - Data preparation
+  ✅ finetune_qwen_lora.py          [303 lines] - LoRA fine-tuning pipeline
+  ✅ inference_qwen_span.py         [342 lines] - Inference engine
+  ✅ validate_system_prompt.py      [155 lines] - Validation tool
+
+Training Data (214 MB total):
+  ✅ training_data/train.jsonl      [22.8k samples, 203 MB]
+  ✅ training_data/val.jsonl        [1.2k samples, 11 MB]
+
+Documentation:
+  ✅ START_HERE.txt                 [Quick start reference]
+  ✅ SERVICE_README.md              [Usage guide & service overview]
+  ✅ README.md                      [Additional documentation]
+  ✅ DEPLOYMENT.md                  [This deployment guide] - NEW
+  ✅ requirements_lora.txt          [Dependencies list]
+
+Configuration:
+  ✅ All file paths validated and updated
+  ✅ System prompt byte-identical across scripts ✅
+  ✅ No breaking changes to functionality
+
+================================================================================
+FINAL DIRECTORY STRUCTURE
+================================================================================
+
+services/lora_finetuning/
+├── manage.py                     [ENTRY POINT]
+├── finetune_qwen_span_detector.py
+├── finetune_qwen_lora.py
+├── inference_qwen_span.py
+├── validate_system_prompt.py
+├── requirements_lora.txt
+├── training_data/
+│   ├── train.jsonl
+│   └── val.jsonl
+├── START_HERE.txt
+├── SERVICE_README.md
+├── README.md
+├── DEPLOYMENT.md
+└── CLEANUP_SUMMARY.txt           [This file]
+
+Total Size: 214 MB (fits on any VM)
+
+================================================================================
+VERIFICATION CHECKLIST
+================================================================================
+
+✅ All Python scripts syntax-checked (no compilation errors)
+✅ Training data present and complete (22.8k + 1.2k samples)
+✅ Requirements file updated and valid
+✅ Documentation consolidated and relevant
+✅ File paths corrected to root-level structure
+✅ System prompt validation passed
+✅ No external dependencies or secrets
+✅ Ready for immediate VM deployment
+
+================================================================================
+QUICK START ON VM
+================================================================================
+
+1. Transfer to VM:
+   scp -r services/lora_finetuning/ user@vm:/path/to/services/
+
+2. Install dependencies:
+   cd services/lora_finetuning
+   pip install -r requirements_lora.txt
+
+3. Run training:
+   python3 manage.py
+   # Select: 1 (validate) → 2 (prepare) → 3 (train)
+
+4. Expected time: 30-60 minutes on RTX 6000 Blackwell
+
+================================================================================
+DEPLOYMENT SUMMARY
+================================================================================
+
+Status: ✅ READY FOR VM DEPLOYMENT
+Size: 214 MB (fast transfer)
+Dependencies: Listed in requirements_lora.txt
+Time to train: 30-60 minutes
+Hardware required: RTX 6000 Blackwell (96GB VRAM)
+Output: qwen_gb_detector_lora/ (auto-created after training)
+
+No further cleanup needed. The service is production-ready.
+
+================================================================================

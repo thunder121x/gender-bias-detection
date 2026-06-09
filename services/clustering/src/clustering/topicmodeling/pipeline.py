@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import ast
 from dataclasses import dataclass, field
 from typing import Dict, List, Sequence, Tuple
 
@@ -8,7 +9,7 @@ from sklearn.decomposition import LatentDirichletAllocation
 from sklearn.feature_extraction.text import CountVectorizer
 
 from ..utils.preprocessing import preprocess
-
+from loguru import logger
 
 @dataclass
 class TopicModelingConfig:
@@ -95,9 +96,34 @@ def run_topic_modeling(
         config = TopicModelingConfig()
     if text_column not in df.columns:
         raise ValueError(f"Missing text column '{text_column}' in dataframe")
-
+    
+    
     working_df = df.copy()
-    working_df["clean"] = working_df[text_column].astype(str).apply(preprocess)
+
+    # if tokens column is used, skip preprocess
+
+    if text_column == "tokens":
+        logger.info("Tokens Col are using")
+
+        # def ensure_tokenized(val):
+        #     # If already a list -> join
+        #     if isinstance(val, list):
+        #         return " ".join(val)
+        #     # If string that looks like a list -> parse -> join
+        #     if isinstance(val, str) and val.startswith("[") and val.endswith("]"):
+        #         try:
+        #             parsed = ast.literal_eval(val)
+        #             if isinstance(parsed, list):
+        #                 return " ".join(parsed)
+        #         except Exception:
+        #             pass
+        #     # Otherwise assume already pre-tokenized string
+        #     return str(val)
+
+        # working_df["clean"] = working_df[text_column].apply(ensure_tokenized)
+        working_df["clean"] = working_df[text_column].astype(str)
+    else:
+        working_df["clean"] = working_df[text_column].astype(str).apply(preprocess)
     texts: Sequence[str] = working_df["clean"].tolist()
 
     vectorizer = _build_vectorizer(config)

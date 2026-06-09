@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+import ast
 from pathlib import Path
 from typing import Tuple
 
@@ -86,14 +87,40 @@ def main() -> None:
     input_path = Path(args.input)
     df = pd.read_csv(input_path)
 
-    result = run_topic_modeling(df=df, text_column=args.text_column, config=config)
+    if "tokens" in df.columns and df["tokens"].notna().any():
+        df["tokens"] = df["tokens"].apply(lambda s: ast.literal_eval(s))
+        text_column_to_use = "tokens"
+    else:
+        text_column_to_use = args.text_column
+        
+    result = run_topic_modeling(df=df, text_column=text_column_to_use, config=config)
     result.df.to_csv(args.output_csv, index=False)
 
     print(f"Wrote topics to {args.output_csv}")
-    for topic_id, words in result.topic_words.items():
-        terms = ", ".join(word for word, _ in words[: args.top_words])
-        print(f"Topic {topic_id}: {terms}")
+    # Option A
+    # for topic_id, words in result.topic_words.items():
+    #     terms = ", ".join(word for word, _ in words[: args.top_words])
+    #     print(f"Topic {topic_id}: {terms}")
+    from collections import Counter
 
+    # Option B
+    # ใช้ tokens จาก df โดยตรง
+    if "tokens" not in df.columns:
+        raise ValueError("tokens column is required for manual frequency topic summary.")
+
+    tokens_series = df["tokens"]
+    topic_series = result.df["topic"]
+
+    print("\n=== Topic Summary from Tokens Frequency ===")
+    for topic_id in sorted(topic_series.unique()):
+        topic_docs = tokens_series[topic_series == topic_id]
+        all_tokens = [token for doc in topic_docs for token in doc]
+
+        counter = Counter(all_tokens)
+        top_words = counter.most_common(args.top_words)
+
+        terms = ", ".join([w for w, _ in top_words])
+        print(f"Topic {topic_id}: {terms}")
 
 if __name__ == "__main__":
     main()

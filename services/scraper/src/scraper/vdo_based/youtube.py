@@ -45,6 +45,7 @@ class YouTubeScraper:
         with YoutubeDL(self.get_options()) as ydl:
             result = ydl.extract_info(self.video_url, download=False)
             raw_comments = result.get("comments", [])
+            print(raw_comments)
 
         for c in raw_comments:
             record = SocialMediaRecord(
@@ -75,7 +76,7 @@ class YouTubeScraper:
     def run(self):
         """Run the full YouTube comment scraping pipeline."""
         comments = self.extract_comments()
-        if comments:
-            self.save_to_csv(comments)
-        else:
-            print("⚠️ No comments found for this video.")
+        # if comments:
+        #     self.save_to_csv(comments)
+        # else:
+        #     print("⚠️ No comments found for this video.")
