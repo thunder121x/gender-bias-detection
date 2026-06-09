@@ -59,6 +59,15 @@ logs/
 output/
 outputs/
 assets/
+!report/assets/
+
+# LaTeX build artifacts
+*.aux
+*.toc
+*.lof
+*.lot
+*.out
+*.synctex.gz
 
 # OS Files
 .DS_Store

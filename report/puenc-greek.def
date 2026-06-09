@@ -1,0 +1,2 @@
+% Local compatibility stub for older hyperref/class combinations.
+\ProvidesFile{puenc-greek.def}[2026/04/27 Local stub]

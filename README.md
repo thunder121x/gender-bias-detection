@@ -41,6 +41,7 @@ inference web app (Flask)              services/inference_app
 | [data/](data/) | Annotated datasets (CSV, tracked in git) |
 | [notebooks/](notebooks/) | Exploration & training notebooks |
 | [docs/](docs/) | Annotation guideline, data format spec, fine-tuning guides |
+| [report/](report/) | Senior project report (LaTeX source + compiled PDF) |
 | [models/](models/) | Model weights — download from Drive, see [models/README.md](models/README.md) |
 
 ## Data & Models
