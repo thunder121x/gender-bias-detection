@@ -15,8 +15,9 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 
 # Model configuration
-# Default points to the repo-level models/ folder; download weights from the
-# Google Drive link in models/README.md first, or override with MODEL_PATH env var.
+# Default points to the repo-level models/ folder. Override with the MODEL_PATH
+# env var — accepts a local path or a Hugging Face Hub id, e.g.
+# MODEL_PATH=thunder121x/thai-gender-bias-classifier-minilm (see models/README.md).
 import os
 from pathlib import Path
 

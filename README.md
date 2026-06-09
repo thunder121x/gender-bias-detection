@@ -42,21 +42,31 @@ inference web app (Flask)              services/inference_app
 | [notebooks/](notebooks/) | Exploration & training notebooks |
 | [docs/](docs/) | Annotation guideline, data format spec, fine-tuning guides |
 | [report/](report/) | Senior project report (LaTeX source + compiled PDF) |
-| [models/](models/) | Model weights — download from Drive, see [models/README.md](models/README.md) |
+| [models/](models/) | Model weights — load from Hugging Face, see [models/README.md](models/README.md) |
 
 ## Data & Models
 
-Large artifacts (~8.3GB: model weights, raw scraped data, training data, outputs)
-are stored on Google Drive, not in git:
+**Models are published on Hugging Face** — no Google Drive needed to run anything:
+
+| Model | Hugging Face |
+|-------|--------------|
+| MiniLM gender-bias classifier | [thunder121x/thai-gender-bias-classifier-minilm](https://huggingface.co/thunder121x/thai-gender-bias-classifier-minilm) |
+| Qwen 3.5 2B span-extraction LoRA | [thunder121x/thai-gender-bias-span-extraction-qwen3.5-2b](https://huggingface.co/thunder121x/thai-gender-bias-span-extraction-qwen3.5-2b) |
+
+See [models/README.md](models/README.md) for loading options.
+
+Raw data and intermediate artifacts (training data, outputs, scraped CSVs,
+base model for retraining) are archived on Google Drive — only needed for
+reproducing training, not for inference:
 
 **Drive folder:** `<DRIVE_LINK>` <!-- paste share link after upload -->
 
 | Drive path | Contents |
 |------------|----------|
-| `models/` | MiniLM classifier, CREST base, Qwen LoRA adapter |
-| `training_data/` | LoRA fine-tuning train/val JSONL |
-| `outputs/` | Synthesis outputs, visualization assets |
+| `training_data/` | Fine-tuning train/val JSONL |
+| `outputs/` | Synthesis outputs, visualization assets, analysis results |
 | `scraper_data/` | Raw scraped tweets, post-processed clustering input |
+| `models/` | Training checkpoints + CREST base model (final models are on HF) |
 
 Small annotated datasets (~3MB) are tracked in [data/](data/).
 
@@ -73,11 +83,14 @@ cp .env.example .env        # fill in GEMINI_API_KEY etc.
 Each service is self-contained — install its own dependencies:
 
 ```bash
-# example: run the inference web app
+# example: run the inference web app — model loads straight from Hugging Face
 pip install -r services/inference_app/requirements.txt
-# download models/minilm_gender_bias_v2 from Drive first (see models/README.md)
-python services/inference_app/app.py
+MODEL_PATH=thunder121x/thai-gender-bias-classifier-minilm \
+    python services/inference_app/app.py
 ```
+
+To use a local copy instead, download from the Hub into `models/`
+(see [models/README.md](models/README.md)) and run without `MODEL_PATH`.
 
 Services with a `pyproject.toml` (scraper, clustering, prompteng, synthesizer) can be
 installed with `pip install -e services/<name>` or [uv](https://docs.astral.sh/uv/).
