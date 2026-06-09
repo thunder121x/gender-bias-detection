@@ -239,3 +239,8 @@ For issues or questions, please refer to the project documentation or contact th
 
 **Last Updated**: April 2026
 **Model Version**: minilm_gender_bias_v2
+
+## Authors
+
+- **Nanphat Tongsirisukool** — nanphatx@hotmail.com
+- **Natcha Trairattanasak** — pnbookclub@gmail.com

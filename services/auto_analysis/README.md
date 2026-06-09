@@ -91,3 +91,8 @@ records:
 - Retries: Failed batches are logged in summary
 - Partial Results: Even if some batches fail, processed results are saved
 - Fast Model: Uses gemini-3.1-flash-lite-preview for faster processing
+
+## Authors
+
+- **Nanphat Tongsirisukool** — nanphatx@hotmail.com
+- **Natcha Trairattanasak** — pnbookclub@gmail.com

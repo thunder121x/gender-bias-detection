@@ -275,3 +275,8 @@ If you use this code, please cite:
   year={2021}
 }
 ```
+
+## Authors
+
+- **Nanphat Tongsirisukool** — nanphatx@hotmail.com
+- **Natcha Trairattanasak** — pnbookclub@gmail.com

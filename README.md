@@ -93,6 +93,11 @@ installed with `pip install -e services/<name>` or [uv](https://docs.astral.sh/u
 - [H100 training guide](docs/h100-training-guide.md) — GPU setup, presets, troubleshooting
 - [Synthesis prompt example](docs/example-prompt-synthesize.md)
 
+## Authors
+
+- **Nanphat Tongsirisukool** — nanphatx@hotmail.com
+- **Natcha Trairattanasak** — pnbookclub@gmail.com
+
 ## License
 
 [MIT](LICENSE)

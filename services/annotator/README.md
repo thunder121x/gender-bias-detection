@@ -22,3 +22,8 @@ Open the printed localhost URL.
 5. After all sentences, export CSV with `id,text,tokens,rationales,triggers,label_type`.
 
 State auto-saves to `localStorage`; use “Start Over” on the export page to reset. All operations run client-side only.
+
+## Authors
+
+- **Nanphat Tongsirisukool** — nanphatx@hotmail.com
+- **Natcha Trairattanasak** — pnbookclub@gmail.com

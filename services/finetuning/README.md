@@ -343,3 +343,8 @@ print(highlighted)
 ## License
 
 Same as parent project
+
+## Authors
+
+- **Nanphat Tongsirisukool** — nanphatx@hotmail.com
+- **Natcha Trairattanasak** — pnbookclub@gmail.com

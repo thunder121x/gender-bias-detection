@@ -3,6 +3,10 @@
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "contributors": [
+    "Nanphat Tongsirisukool <nanphatx@hotmail.com>",
+    "Natcha Trairattanasak <pnbookclub@gmail.com>"
+  ],
   "scripts": {
     "dev": "vite",
     "build": "vite build",
